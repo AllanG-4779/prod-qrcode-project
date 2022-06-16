@@ -17,7 +17,7 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
-public class Authentication {
+public class Auth {
     @Autowired
     private UserRepoInt userRepo;
     @Autowired
