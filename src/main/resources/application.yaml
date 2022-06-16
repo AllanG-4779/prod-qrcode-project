@@ -1,0 +1,22 @@
+server:
+  port: 8001
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: allang@group4qrcode
+    password: cnd80751xh.com
+    url: jdbc:mysql://group4qrcode.mysql.database.azure.com:3306/qrcodedb
+  jpa:
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+
+
+
+
+
+
+
+
