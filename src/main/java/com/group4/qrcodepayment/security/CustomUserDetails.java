@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.stereotype.Component;
 
 public class CustomUserDetails implements UserDetails {
     private final UserInfo user;
@@ -61,6 +61,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isConfirmed();
+        return true;
     }
 }
