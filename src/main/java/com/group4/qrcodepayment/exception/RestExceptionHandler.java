@@ -50,17 +50,7 @@ public class RestExceptionHandler extends Exception {
 
 
     }
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<Object> errorPage(ResponseStatusException response){
 
-         Map<Object, Object> map= new LinkedHashMap<>();
-         map.put("code", response.getRawStatusCode());
-         map.put("statusMessage", response.getStatus());
-
-         map.put("Reason", response.getMessage());
-         return ResponseEntity.status(response.getStatus()).body(map);
-
-    }
     @ExceptionHandler(InvalidUsernameOrPasswordException.class)
     public ResponseEntity<Object> handleInvalidCredentials(InvalidUsernameOrPasswordException ex){
 
