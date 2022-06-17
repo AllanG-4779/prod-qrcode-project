@@ -19,6 +19,10 @@ public class UserInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(insertable = false)
     private Long userId;
+    @Column(nullable = false, length = 30)
+    private String firstName;
+    @Column(nullable=false, length = 30)
+    private String secondName;
     @Column(unique = true, updatable = false)
     private String username;
     @Column(unique = true, updatable = false)

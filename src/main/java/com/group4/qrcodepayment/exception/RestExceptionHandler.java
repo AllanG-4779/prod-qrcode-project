@@ -1,6 +1,7 @@
 package com.group4.qrcodepayment.exception;
 
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
+import com.group4.qrcodepayment.exception.resterrors.InvalidUsernameOrPasswordException;
 import com.group4.qrcodepayment.exception.resterrors.UsernameOrEmailExistsException;
 import org.springframework.boot.autoconfigure.web.format.DateTimeFormatters;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
@@ -48,6 +50,23 @@ public class RestExceptionHandler extends Exception {
 
 
     }
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Object> errorPage(ResponseStatusException response){
+
+         Map<Object, Object> map= new LinkedHashMap<>();
+         map.put("code", response.getRawStatusCode());
+         map.put("statusMessage", response.getStatus());
+
+         map.put("Reason", response.getMessage());
+         return ResponseEntity.status(response.getStatus()).body(map);
+
+    }
+    @ExceptionHandler(InvalidUsernameOrPasswordException.class)
+    public ResponseEntity<Object> handleInvalidCredentials(InvalidUsernameOrPasswordException ex){
+
+         return ResponseEntity.status(401).body(ex.getMessage());
+    }
+
 
 
 }
