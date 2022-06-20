@@ -19,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         //set a logger
         Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
-        UserInfo user = repoInt.findUserByUsernameOREmail(email);
+        UserInfo user = repoInt.findUserByPhoneOREmail(email);
 
         logger.info( "The user is "+ user);
         logger.info("user was not successfully authenticated ");

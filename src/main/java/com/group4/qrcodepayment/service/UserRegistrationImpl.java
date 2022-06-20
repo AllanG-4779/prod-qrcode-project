@@ -1,7 +1,7 @@
 package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
-import com.group4.qrcodepayment.exception.resterrors.UsernameOrEmailExistsException;
+import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import com.group4.qrcodepayment.models.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +17,17 @@ public class UserRegistrationImpl implements UserRegistrationService{
     }
 
     @Override
-    public void checkUserNameExists(String username) throws UsernameOrEmailExistsException {
+    public void checkUserNameExists(String username) throws PhoneOrEmailExistsException {
         UserInfo usr = userRepo.findByUsername(username);
         if (!(usr == null)){
-            throw new UsernameOrEmailExistsException("Username is taken");
+            throw new PhoneOrEmailExistsException("Username is taken");
         }
     }
 
     @Override
-    public void checkEmailExists(String email) throws UsernameOrEmailExistsException {
+    public void checkEmailExists(String email) throws PhoneOrEmailExistsException {
      UserInfo user = userRepo.findUserByEmail(email);
      if (!(user==null))
-         throw new UsernameOrEmailExistsException("Email address is taken");
+         throw new PhoneOrEmailExistsException("Email address is taken");
     }
 }

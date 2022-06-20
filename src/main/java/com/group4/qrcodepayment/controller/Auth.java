@@ -1,11 +1,9 @@
 package com.group4.qrcodepayment.controller;
 
-import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.dto.JWTokenDto;
 import com.group4.qrcodepayment.dto.LoginDto;
 import com.group4.qrcodepayment.dto.RegistrationDto;
-import com.group4.qrcodepayment.exception.resterrors.InvalidUsernameOrPasswordException;
-import com.group4.qrcodepayment.exception.resterrors.UsernameOrEmailExistsException;
+import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.security.JWTUtils;
 import com.group4.qrcodepayment.security.PasswordConfig;
@@ -19,7 +17,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
 
 @RestController
@@ -36,10 +33,10 @@ public class Auth {
     AuthenticationManager authenticationManager;
     private JWTUtils jwtUtils;
     @PostMapping ("/register")
-    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws UsernameOrEmailExistsException{
+    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException {
 
 //        check if user is available
-       userRegistrationService.checkUserNameExists(details.getUsername());
+       userRegistrationService.checkUserNameExists(details.getPhone());
        userRegistrationService.checkEmailExists(details.getEmail());
 
         UserInfo user = UserInfo.builder()
@@ -48,7 +45,7 @@ public class Auth {
                 .password(passwordConfig.passwordEncoder().encode(details.getPassword()))
                 .phone(details.getPhone())
                 .roles("USER")
-                .username(details.getUsername())
+
                 .firstName(details.getFirstName())
                 .secondName(details.getSecondName())
                 .build();

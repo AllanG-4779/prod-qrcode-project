@@ -10,9 +10,9 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
     @Query("SELECT user FROM UserInfo user where user.email=?1")
     UserInfo findUserByEmail(String email);
 
-   @Query("SELECT user FROM UserInfo user WHERE user.username=?1")
+   @Query("SELECT user FROM UserInfo user WHERE user.phone=?1")
    UserInfo findByUsername(String username);
 
-   @Query("SELECT user FROM UserInfo user WHERE user.email=?1 OR user.username=?1")
-   UserInfo findUserByUsernameOREmail(String usernameOrEmail);
+   @Query("SELECT user FROM UserInfo user WHERE user.email=?1 OR user.phone=?1")
+   UserInfo findUserByPhoneOREmail(String usernameOrEmail);
 }
