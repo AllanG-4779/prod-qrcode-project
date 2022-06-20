@@ -1,13 +1,16 @@
 package com.group4.qrcodepayment.controller;
 
-import com.group4.qrcodepayment.dto.JWTokenDto;
-import com.group4.qrcodepayment.dto.LoginDto;
-import com.group4.qrcodepayment.dto.RegistrationDto;
+import com.group4.qrcodepayment.dto.*;
+import com.group4.qrcodepayment.events.publisher.LoginRegistrationEventPublisher;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
+import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.security.JWTUtils;
 import com.group4.qrcodepayment.security.PasswordConfig;
+import com.group4.qrcodepayment.service.OtpServiceImpl;
 import com.group4.qrcodepayment.service.UserRegistrationService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -32,6 +35,10 @@ public class Auth {
     @Autowired
     AuthenticationManager authenticationManager;
     private JWTUtils jwtUtils;
+    @Autowired
+    private LoginRegistrationEventPublisher loginRegistrationEventPublisher;
+    @Autowired
+    private OtpServiceImpl otpService;
     @PostMapping ("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException {
 
@@ -50,13 +57,16 @@ public class Auth {
                 .secondName(details.getSecondName())
                 .build();
 
-        userRegistrationService.userRegister(user);
+        //userRegistrationService.userRegister(user);
+//        publish that registration has been successfully committed
+        loginRegistrationEventPublisher.authPublisher(details);
 
-         return ResponseEntity.status(201).body(details);
+//         return ResponseEntity.status(201).body(details);
+        return null;
 
     }
     @PostMapping("/login")
-    public JWTokenDto login(@RequestBody LoginDto loginCredentials)
+    public JWTokenDto login(@RequestBody @Valid LoginDto loginCredentials)
             throws Exception {
 //        login the user
         try{
@@ -78,5 +88,21 @@ public class Auth {
                 .token(token)
                 .user_id(userDetails.getUsername())
                 .build();
+    }
+
+//    Verify otp
+    @PostMapping("/verify")
+    public String verify(@RequestBody VerificationCode code){
+
+        OneTimeCode otpDto = otpService.getOtp(code.getPhone());
+        Logger logger = LoggerFactory.getLogger(this.getClass());
+        logger.debug(otpDto.toString());
+        if(otpDto.getCode().equals(code.getCode())){
+            return "Phone number successfully verified";
+        }
+
+        return "Invalid OTP please try again after a minute";
+
+
     }
 }
