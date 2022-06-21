@@ -12,6 +12,7 @@ import com.group4.qrcodepayment.service.UserRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -96,19 +97,34 @@ public class Auth {
 
 //    Verify otp
     @PostMapping("/verify")
-    public String verify(@RequestBody VerificationCode code){
+    public ResponseEntity<Object> verify(@RequestBody VerificationCode code){
 
         OneTimeCode otpDto = otpService.getOtp(code.getPhone());
         Logger logger = LoggerFactory.getLogger(this.getClass());
         logger.debug("Returned OTP " + otpDto.toString());
+        Map<Object, Object> map = new LinkedHashMap<>();
+        String message = null;
 //        Check if the code submitted is the same and has not expired
+
         if(otpDto.getCode().equals(code.getCode()) &&
                 LocalDateTime.now().isBefore(otpDto.getExpireAt())
         ){
-            return "Phone number successfully verified";
+
+
+//            SET THE ACCOUNT AS VERIFIED
+            userRegistrationService.setAccountVerified(code.getPhone());
+
+            map.put("code", 201);
+            map.put("message", "Successfully verified");
+            map.put("timestamp", LocalDateTime.now());
+            return ResponseEntity.status(200).body(map);
+
         }
 
-        return "Invalid OTP please try again after a minute";
+        map.put("code", 403);
+        map.put("message", HttpStatus.FORBIDDEN);
+        map.put("timestamp", LocalDateTime.now());
+        return ResponseEntity.status(403).body(map);
 
 
     }

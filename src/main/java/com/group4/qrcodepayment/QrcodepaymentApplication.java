@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
 import javax.annotation.PostConstruct;
-@EnableConfigurationProperties({TwilioConfig.class})
+
 @SpringBootApplication
 public class QrcodepaymentApplication {
 

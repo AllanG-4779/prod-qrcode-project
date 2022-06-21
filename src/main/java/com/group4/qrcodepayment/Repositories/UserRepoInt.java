@@ -2,9 +2,11 @@ package com.group4.qrcodepayment.Repositories;
 
 import com.group4.qrcodepayment.models.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +21,9 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
    UserInfo findUserByPhoneOREmail(String usernameOrEmail);
 
    Optional<UserInfo> findUserInfoByPhone(String phone);
+
+   @Modifying
+   @Transactional
+   @Query("UPDATE UserInfo  useraccount SET useraccount.isConfirmed=true WHERE useraccount.phone=?1")
+    void verifyAccount(String phone);
 }

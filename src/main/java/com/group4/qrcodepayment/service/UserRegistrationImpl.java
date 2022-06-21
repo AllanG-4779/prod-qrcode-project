@@ -49,4 +49,9 @@ public class UserRegistrationImpl implements UserRegistrationService{
 
         return user.isPresent();
     }
+
+    @Override
+    public void setAccountVerified(String phone) {
+        userRepo.verifyAccount(phone);
+    }
 }

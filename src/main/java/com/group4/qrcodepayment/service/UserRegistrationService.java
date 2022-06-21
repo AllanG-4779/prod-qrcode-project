@@ -13,4 +13,6 @@ public interface UserRegistrationService {
     void checkEmailExists(String email) throws PhoneOrEmailExistsException;
 
     Boolean numberRegistered(String phone) throws SQLException;
+
+    void setAccountVerified(String phone);
 }

@@ -63,5 +63,15 @@ public class RestExceptionHandler extends Exception {
     }
 
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Object> handleRuntimeException(RuntimeException ex){
+        Map<Object, Object> response = new LinkedHashMap<>();
+        response.put("message", ex.getMessage());
+        response.put("code", 500);
+        response.put("reason", HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                response
+        );
+    }
 
 }
