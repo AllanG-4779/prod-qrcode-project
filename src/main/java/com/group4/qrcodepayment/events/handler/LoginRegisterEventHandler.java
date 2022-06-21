@@ -27,10 +27,12 @@ public class LoginRegisterEventHandler {
     private TwilioConfig twilioConfig;
     @Autowired
     private OtpServiceImpl otpService;
+    private static final int OTP_EXPIRE = 1;
 
 @EventListener
 @Async
     public void sendOTP(LoginRegisterEvent loginRegisterEvent){
+
 
  //     send an sms or notification
     String OTP = getOTP();
@@ -38,17 +40,16 @@ public class LoginRegisterEventHandler {
     Message message = Message.creator(
             new PhoneNumber("+254"+loginRegisterEvent.getRegistrationDto().getPhone()),
             new PhoneNumber(twilioConfig.getTrialNumber()),
-            "\nHi! This number has been used to register on our site!\nTo confirm the same, Please " +
-                    "enter this OTP\n" +
+            "\nYour OTP for QPay is: " +
                     OTP
     ).create();
 
     //save the OTP to the database
     OtpDto code = OtpDto.builder()
             .code(OTP)
-            .issue(LocalDateTime.now())
+            .issueAt(LocalDateTime.now())
             .owner(loginRegisterEvent.getRegistrationDto().getPhone())
-            .expiry(1)
+            .expireAt(LocalDateTime.now().plusMinutes(OTP_EXPIRE))
             .build();
     otpService.addOtp(code);
 
@@ -60,7 +61,7 @@ public class LoginRegisterEventHandler {
     public String getOTP(){
         Logger logger = LoggerFactory.getLogger(LoginRegisterEventHandler.class);
         logger.info("Initiating the OTP generation");
-        String OTP = new DecimalFormat("0000000").format(new Random().nextInt(999999));
+        String OTP = new DecimalFormat("0000").format(new Random().nextInt(9999));
        logger.info("Successfully generated an OTP ");
        return OTP;
     }

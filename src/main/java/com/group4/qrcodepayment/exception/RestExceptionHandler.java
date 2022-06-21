@@ -2,6 +2,7 @@ package com.group4.qrcodepayment.exception;
 
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
 import com.group4.qrcodepayment.exception.resterrors.InvalidUsernameOrPasswordException;
+import com.group4.qrcodepayment.exception.resterrors.OtpNotGeneratedException;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,6 +50,16 @@ public class RestExceptionHandler extends Exception {
     public ResponseEntity<Object> handleInvalidCredentials(InvalidUsernameOrPasswordException ex){
 
          return ResponseEntity.status(401).body(ex.getMessage());
+    }
+    @ExceptionHandler(OtpNotGeneratedException.class)
+     public ResponseEntity<Object> handleNoOtpGeneratedException(OtpNotGeneratedException ex){
+         Map<Object, Object> response = new LinkedHashMap<>();
+         response.put("message", "OTP not generated for this number");
+         response.put("code", 406);
+         response.put("reason", HttpStatus.NOT_ACCEPTABLE);
+         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+                 response
+         );
     }
 
 

@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
     @Query("SELECT user FROM UserInfo user where user.email=?1")
@@ -15,4 +17,6 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
 
    @Query("SELECT user FROM UserInfo user WHERE user.email=?1 OR user.phone=?1")
    UserInfo findUserByPhoneOREmail(String usernameOrEmail);
+
+   Optional<UserInfo> findUserInfoByPhone(String phone);
 }

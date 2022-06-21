@@ -21,6 +21,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -57,12 +61,12 @@ public class Auth {
                 .secondName(details.getSecondName())
                 .build();
 
-        //userRegistrationService.userRegister(user);
+        userRegistrationService.userRegister(user);
 //        publish that registration has been successfully committed
         loginRegistrationEventPublisher.authPublisher(details);
 
-//         return ResponseEntity.status(201).body(details);
-        return null;
+         return ResponseEntity.status(201).body(details);
+
 
     }
     @PostMapping("/login")
@@ -96,13 +100,35 @@ public class Auth {
 
         OneTimeCode otpDto = otpService.getOtp(code.getPhone());
         Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.debug(otpDto.toString());
-        if(otpDto.getCode().equals(code.getCode())){
+        logger.debug("Returned OTP " + otpDto.toString());
+//        Check if the code submitted is the same and has not expired
+        if(otpDto.getCode().equals(code.getCode()) &&
+                LocalDateTime.now().isBefore(otpDto.getExpireAt())
+        ){
             return "Phone number successfully verified";
         }
 
         return "Invalid OTP please try again after a minute";
 
+
+    }
+    @PostMapping("/registration/verify")
+    public ResponseEntity<Object> verifyRegistration(@RequestBody RegistrationVerification phone) throws SQLException {
+
+         Boolean user = userRegistrationService.numberRegistered(phone.getPhone());
+         Map<Object, Object> res = new LinkedHashMap<>();
+//         User with the phone number is found
+         if (user){
+             res.put("code", 200);
+             res.put("message", "Number registered");
+             res.put("timestamp", LocalDateTime.now());
+             return ResponseEntity.status(200).body(res);
+         }
+//         User with the phone number is not registered
+             res.put("code", 404);
+             res.put("message", "Number not found");
+             res.put("timestamp", LocalDateTime.now());
+             return ResponseEntity.status(404).body(res);
 
     }
 }

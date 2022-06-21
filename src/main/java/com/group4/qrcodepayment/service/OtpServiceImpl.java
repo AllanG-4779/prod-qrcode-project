@@ -2,7 +2,10 @@ package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.Repositories.OtpRepository;
 import com.group4.qrcodepayment.dto.OtpDto;
+import com.group4.qrcodepayment.exception.resterrors.OtpNotGeneratedException;
 import com.group4.qrcodepayment.models.OneTimeCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +20,13 @@ public class OtpServiceImpl implements OtpService{
     private OtpRepository otpRepository;
     @Override
     public void addOtp(OtpDto otpDto) {
+// clear the otp the number has received before adding a new one;
+        otpRepository.deleteByOwner(otpDto.getOwner());
         OneTimeCode code = OneTimeCode
                 .builder()
-                .expiry(otpDto.getExpiry())
+                .expireAt(otpDto.getExpireAt())
                 .owner(otpDto.getOwner())
-                .issue(otpDto.getIssue())
+                .issueAt(otpDto.getIssueAt())
                 .code(otpDto.getCode())
                 .build();
         otpRepository.save(code);
@@ -30,17 +35,16 @@ public class OtpServiceImpl implements OtpService{
 
     @Override
     public OneTimeCode getOtp(String phone) {
-       List<OneTimeCode> dto = otpRepository.findByPhoneNotExpired(phone);
+       OneTimeCode dto = otpRepository.findByPhoneNotExpired(phone);
 //       get those codes that hasn't expired
-        if(dto ==null){
-            throw new RuntimeException("In correct OTP");
+        if(dto == null){
+            throw new OtpNotGeneratedException("No OTP has been generated please generate a new one");
         }
-       List<OneTimeCode> code =  dto.stream().filter(
-               x->
-                       LocalDateTime.now().compareTo(x.getIssue().plusMinutes(x.getExpiry())) > 0
 
-       ).collect(Collectors.toList());
+        Logger logger = LoggerFactory.getLogger(this.getClass());
 
-        return code.get(0);
+        logger.info(dto.toString());
+
+        return dto;
     }
 }

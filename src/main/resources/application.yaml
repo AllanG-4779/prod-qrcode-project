@@ -3,18 +3,16 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: allang@group4qrcode
-    password: cnd80751xh.com
-    url: jdbc:mysql://group4qrcode.mysql.database.azure.com:3306/qrcodedb
+    username: allang
+    password: cnd80751xh
+    url: jdbc:mysql://localhost:3306/qrcodedb
   jpa:
     generate-ddl: true
     show-sql: true
     hibernate:
       ddl-auto: update
-twilio:
-    sid: AC96b3939b60ab3b9b30922ae87038988c
-    authToken: e069e2c944e33592c9fcb2b3f6ee42e7
-    trialNumber: +19897839698
+
+
 
 
 

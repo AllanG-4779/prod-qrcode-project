@@ -15,6 +15,6 @@ public class OtpDto {
     private Long Id;
     private String code;
     private String owner;
-    private LocalDateTime issue;
-    private int expiry;
+    private LocalDateTime issueAt;
+    private LocalDateTime expireAt;
 }
