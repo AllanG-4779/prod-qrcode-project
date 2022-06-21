@@ -2,10 +2,7 @@ server:
   port: 8001
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: allang
-    password: cnd80751xh
-    url: jdbc:mysql://localhost:3306/qrcodedb
+    driver-class-name: org.postgresql.Driver
   jpa:
     generate-ddl: true
     show-sql: true
