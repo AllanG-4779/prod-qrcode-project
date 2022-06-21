@@ -2,7 +2,8 @@ server:
   port: 8001
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     generate-ddl: true
     show-sql: true
@@ -10,9 +11,6 @@ spring:
       ddl-auto: update
   config:
     import: optional:secrets.yaml
-
-
-
 
 
 
