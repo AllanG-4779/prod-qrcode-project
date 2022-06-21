@@ -31,4 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
-secrets.yaml
+/src/main/resources/secrets.yaml

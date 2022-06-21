@@ -11,7 +11,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-
+  config:
+    import: optional:secrets.yaml
 
 
 
