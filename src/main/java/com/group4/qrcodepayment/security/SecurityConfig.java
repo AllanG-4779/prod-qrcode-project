@@ -45,7 +45,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //Tell the security that you don't want to use session based
                .and()
                .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                       .and()
+                               .logout().logoutUrl("/logout").permitAll();
        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 //                                       .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);

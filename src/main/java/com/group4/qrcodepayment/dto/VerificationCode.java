@@ -13,3 +13,4 @@ public class VerificationCode {
     private String code;
     private String phone;
 }
+

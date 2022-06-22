@@ -23,13 +23,14 @@ public class RegistrationDto {
 //    @NotBlank(message ="Username is blank, please correct it")
 ////    private String username;
     @NotBlank(message = "password can never be blank")
-    @Pattern(regexp = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[~`!@$%#^&*()-=+\"?'/<>]).{10,20}$",
-            message = "Password security checks failed")
+    @Pattern(regexp = "^(\\d){4}$",
+            message = "Only numbers are allowed")
+    @NotNull(message= "Did you forget to input your password")
 
     private String password;
         @Pattern(regexp = "([17])(\\d){8}", message = "The phone number you entered is not valid")
     private String phone;
-    @Pattern(regexp = "([a-zA-Z.])+(@)(\\w){4,10}(.)(\\w){2,5}", message = "Email is not valid ")
+    @Pattern(regexp = "([a-zA-Z.\\d])+(@)(\\w){4,10}(.)(\\w){2,5}", message = "Email is not valid ")
     private String email;
 
 
