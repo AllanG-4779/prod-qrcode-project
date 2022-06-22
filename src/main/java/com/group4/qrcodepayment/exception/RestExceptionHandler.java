@@ -77,14 +77,6 @@ public class RestExceptionHandler extends Exception {
         );
     }
 
-    @ExceptionHandler(PhoneNotConfirmedException.class)
-    public JSONObject handlePhoneUnconfirmedException(PhoneNotConfirmedException ex) throws JSONException {
 
-        JSONObject json = new JSONObject();
-        json.put("message", "Please confirm your phone number before going on");
-        json.put("code", 403);
-        json.put("response", "FORBIDDEN");
-        return json;
-    }
 
 }

@@ -11,8 +11,7 @@ spring:
       ddl-auto: update
   config:
     import: optional:secrets.yaml
-jwt:
-  secret: DDLFJDAFLJORJEOWLRJWOFDLFJDsldfkdlfjdlerlersdjfldjfdlfhfrwekfhsdfks
+
 
 
 
