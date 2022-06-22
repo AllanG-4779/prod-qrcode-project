@@ -2,7 +2,10 @@ server:
   port: 8001
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
   jpa:
     generate-ddl: true
