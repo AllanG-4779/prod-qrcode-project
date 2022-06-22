@@ -13,9 +13,9 @@ public class LoginRegistrationEventPublisher {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
-    public void authPublisher(RegistrationDto message){
-        LoginRegisterEvent loginRegisterEvent = new LoginRegisterEvent(message);
-        loginRegisterEvent.setRegistrationDto(message);
+    public void authPublisher(String phoneNumber){
+        LoginRegisterEvent loginRegisterEvent = new LoginRegisterEvent( phoneNumber);
+        loginRegisterEvent.setPhoneNumber(phoneNumber);
         eventPublisher.publishEvent(loginRegisterEvent);
 
     }

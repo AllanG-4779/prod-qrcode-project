@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +21,8 @@ public class JWTUtils implements Serializable {
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
-
-    private final String secretKey = "ALLANG_JWT_CODE_SECRET";
+//
+    private final String secretKey = "abcdkdi983829fsdlfjdljf902rfgoegierpitr098pt304589345o045p982413ljgsafkjofljsdfoadslfjadfoalfjflfjsfifwpfljfoafljsowlgw923rdsfjsdfldsjf209r2rnrjewlfjsd" ;
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {

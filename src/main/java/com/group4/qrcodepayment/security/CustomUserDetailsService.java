@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 
         if (user == null){
-            logger.info("user was not successfully authenticated ");
+            logger.error("User with username " + email + " was not found");
             throw new UsernameNotFoundException("No such user in the database");
         }
         return new CustomUserDetails(user);

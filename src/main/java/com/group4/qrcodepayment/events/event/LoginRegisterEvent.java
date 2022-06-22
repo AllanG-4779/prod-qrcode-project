@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Setter
 
 public class LoginRegisterEvent extends ApplicationEvent {
-    private RegistrationDto registrationDto;
+    private String phoneNumber;
 
     public LoginRegisterEvent(Object source) {
         super(source);

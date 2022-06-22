@@ -1,7 +1,9 @@
 package com.group4.qrcodepayment.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group4.qrcodepayment.dto.*;
 import com.group4.qrcodepayment.events.publisher.LoginRegistrationEventPublisher;
+import com.group4.qrcodepayment.exception.resterrors.PhoneNotConfirmedException;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.models.UserInfo;
@@ -12,6 +14,7 @@ import com.group4.qrcodepayment.service.UserRegistrationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +29,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -44,6 +48,8 @@ public class Auth {
     private LoginRegistrationEventPublisher loginRegistrationEventPublisher;
     @Autowired
     private OtpServiceImpl otpService;
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping ("/register")
     public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException {
 
@@ -64,7 +70,7 @@ public class Auth {
 
         userRegistrationService.userRegister(user);
 //        publish that registration has been successfully committed
-        loginRegistrationEventPublisher.authPublisher(details);
+        loginRegistrationEventPublisher.authPublisher(details.getPhone());
 
          return ResponseEntity.status(201).body(details);
 
@@ -73,7 +79,11 @@ public class Auth {
     @PostMapping("/login")
     public JWTokenDto login(@RequestBody @Valid LoginDto loginCredentials)
             throws Exception {
+//        check if the user account is confirmed
+
 //        login the user
+        logger.info("Authentication process has commenced for user "+ loginCredentials.getPhoneOrEmail());
+
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -82,13 +92,20 @@ public class Auth {
                     )
             );
         }catch(BadCredentialsException e){
-          throw new Exception("Login failed, please try again with other credentials",e );
+          throw new Exception("Login failed, please try again",e );
        }
+
 //        Having passed the test: Authentication test, now create the token
         final UserDetails userDetails = userDetailsService
                 .loadUserByUsername(loginCredentials.getPhoneOrEmail());
-        String token = new JWTUtils().generateToken(userDetails);
+//        check if account is enabled
+        if(!userDetails.isEnabled()){
 
+            throw new PhoneNotConfirmedException("Account not activated please activate by visiting /auth/verify/");
+
+        }
+        String token = new JWTUtils().generateToken(userDetails);
+logger.info("Login token is "+ token);
        return  JWTokenDto.builder()
                 .token(token)
 
@@ -147,4 +164,11 @@ public class Auth {
              return ResponseEntity.status(404).body(res);
 
     }
+    @PostMapping("/verify/phone")
+    public void sendOtp(@RequestBody RegistrationVerification phone){
+
+        loginRegistrationEventPublisher.authPublisher(phone.getPhone());
+
+    }
+
 }

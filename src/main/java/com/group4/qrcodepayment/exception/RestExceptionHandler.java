@@ -3,7 +3,10 @@ package com.group4.qrcodepayment.exception;
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
 import com.group4.qrcodepayment.exception.resterrors.InvalidUsernameOrPasswordException;
 import com.group4.qrcodepayment.exception.resterrors.OtpNotGeneratedException;
+import com.group4.qrcodepayment.exception.resterrors.PhoneNotConfirmedException;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -68,10 +71,12 @@ public class RestExceptionHandler extends Exception {
         Map<Object, Object> response = new LinkedHashMap<>();
         response.put("message", ex.getMessage());
         response.put("code", 500);
-        response.put("reason", HttpStatus.INTERNAL_SERVER_ERROR);
+        response.put("reason", "Something went wrong on our end");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 response
         );
     }
+
+
 
 }

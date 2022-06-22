@@ -38,7 +38,7 @@ public class LoginRegisterEventHandler {
     String OTP = getOTP();
 try{
     Message message = Message.creator(
-            new PhoneNumber("+254"+loginRegisterEvent.getRegistrationDto().getPhone()),
+            new PhoneNumber("+254"+loginRegisterEvent.getPhoneNumber()),
             new PhoneNumber(twilioConfig.getTrialNumber()),
             "\nYour OTP for QPay is: " +
                     OTP
@@ -54,7 +54,7 @@ catch(com.twilio.exception.ApiException e){
     OtpDto code = OtpDto.builder()
             .code(OTP)
             .issueAt(LocalDateTime.now())
-            .owner(loginRegisterEvent.getRegistrationDto().getPhone())
+            .owner(loginRegisterEvent.getPhoneNumber())
             .expireAt(LocalDateTime.now().plusMinutes(OTP_EXPIRE))
             .build();
     otpService.addOtp(code);
