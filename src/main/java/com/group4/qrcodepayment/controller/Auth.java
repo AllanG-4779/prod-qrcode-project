@@ -77,7 +77,7 @@ public class Auth {
         try{
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            loginCredentials.getUsername(),
+                            loginCredentials.getPhoneOrEmail(),
                             loginCredentials.getPassword()
                     )
             );
@@ -86,12 +86,12 @@ public class Auth {
        }
 //        Having passed the test: Authentication test, now create the token
         final UserDetails userDetails = userDetailsService
-                .loadUserByUsername(loginCredentials.getUsername());
+                .loadUserByUsername(loginCredentials.getPhoneOrEmail());
         String token = new JWTUtils().generateToken(userDetails);
 
        return  JWTokenDto.builder()
                 .token(token)
-                .user_id(userDetails.getUsername())
+
                 .build();
     }
 

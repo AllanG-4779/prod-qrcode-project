@@ -22,10 +22,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserInfo user = repoInt.findUserByPhoneOREmail(email);
 
         logger.info( "The user is "+ user);
-        logger.info("user was not successfully authenticated ");
+
 
         if (user == null){
-
+            logger.info("user was not successfully authenticated ");
             throw new UsernameNotFoundException("No such user in the database");
         }
         return new CustomUserDetails(user);
