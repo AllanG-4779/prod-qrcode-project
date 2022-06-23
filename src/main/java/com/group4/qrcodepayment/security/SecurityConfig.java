@@ -41,13 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        http.cors().and().csrf().disable()
                .authorizeRequests()
                .antMatchers(URLs.HOME).authenticated()
-               .antMatchers(URLs.LOGIN,URLs.REGISTER).permitAll()
+               .antMatchers(URLs.LOGIN,URLs.REGISTER,
+                       "/auth/registration/verify").permitAll()
 //Tell the security that you don't want to use session based
                .and()
                .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                       .and()
-                               .logout().logoutUrl("/logout").permitAll();
+               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 //                                       .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
