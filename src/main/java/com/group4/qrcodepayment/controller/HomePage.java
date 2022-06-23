@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/insights")
-@RestController
+
 
 @CrossOrigin(origins = "*")
 public class HomePage {
