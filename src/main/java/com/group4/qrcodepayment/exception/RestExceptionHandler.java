@@ -9,6 +9,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,10 +50,10 @@ public class RestExceptionHandler extends Exception {
 
     }
 
-    @ExceptionHandler(InvalidUsernameOrPasswordException.class)
-    public ResponseEntity<Object> handleInvalidCredentials(InvalidUsernameOrPasswordException ex){
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Object> handleInvalidCredentials(UsernameNotFoundException ex){
 
-         return ResponseEntity.status(401).body(ex.getMessage());
+         return ResponseEntity.status(404).body(ex.getMessage());
     }
     @ExceptionHandler(OtpNotGeneratedException.class)
      public ResponseEntity<Object> handleNoOtpGeneratedException(OtpNotGeneratedException ex){
@@ -66,7 +67,7 @@ public class RestExceptionHandler extends Exception {
     }
 
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleRuntimeException(RuntimeException ex){
         Map<Object, Object> response = new LinkedHashMap<>();
         response.put("message", ex.getMessage());
