@@ -3,6 +3,7 @@ package com.group4.qrcodepayment.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 
 
 @Data
@@ -10,5 +11,6 @@ import lombok.Data;
 
 public class JWTokenDto {
     private String token;
-    private String user_id;
+    private LocalDateTime iat;
+    private LocalDateTime exp;
 }

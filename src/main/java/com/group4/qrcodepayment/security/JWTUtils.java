@@ -1,11 +1,13 @@
 package com.group4.qrcodepayment.security;
 
+import com.group4.qrcodepayment.config.JWTConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,14 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Component
 public class JWTUtils implements Serializable {
 
-//    private static final long serialVersionUID = 234234523523L;
 
-    public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
-
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private JWTConfig config;
 //
-    private final String secretKey = "abcdkdi983829fsdlfjdljf902rfgoegierpitr098pt304589345o045p982413ljgsafkjofljsdfoadslfjadfoalfjflfjsfifwpfljfoafljsowlgw923rdsfjsdfldsjf209r2rnrjewlfjsd" ;
+
 
     //retrieve username from jwt token
     public String getUsernameFromToken(String token) {
@@ -43,7 +46,7 @@ public class JWTUtils implements Serializable {
 
     //for retrieving any information from token we will need the secret key
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        return Jwts.parser().setSigningKey(config.getSecret()).parseClaimsJws(token).getBody();
     }
 
 
@@ -56,6 +59,7 @@ public class JWTUtils implements Serializable {
 
     //generate token for user
     public String generateToken(UserDetails userDetails) {
+
         Map<String, Object> claims = new HashMap<>();
         return doGenerateToken(claims, userDetails.getUsername());
     }
@@ -66,8 +70,8 @@ public class JWTUtils implements Serializable {
     //2. Sign the JWT using the HS512 algorithm and secret key.
     private String doGenerateToken(Map<String, Object> claims, String subject) {
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
-                .signWith(SignatureAlgorithm.HS512, secretKey).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + config.getExpire() * 1000))
+                .signWith(SignatureAlgorithm.HS512, config.getSecret()).compact();
     }
 
 

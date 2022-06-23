@@ -1,5 +1,7 @@
 package com.group4.qrcodepayment.dto;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +17,13 @@ import javax.validation.constraints.NotNull;
 public class LoginDto {
     @NotNull(message = "Login parameter cannot be null")
     @NotBlank(message = "You must provide a user name")
+    @ApiModelProperty(name = "Clients phone number or email address",
+            required = true,
+            dataType = "String", allowableValues = "digits")
     private String phoneOrEmail;
     @NotNull
     @NotBlank
+    @ApiModelProperty(notes = "A four digit pin secret",
+            name="PIN", dataType = "String")
     private String password;
 }
