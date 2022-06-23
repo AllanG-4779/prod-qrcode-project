@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 @CrossOrigin(origins = "*")
 public class HomePage {
 
-    @GetMapping("/")
+    @GetMapping("/home")
     public String testUser()
     {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
