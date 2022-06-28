@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -54,6 +55,12 @@ public class Auth {
     private JWTConfig jwtConfig;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @PostMapping(value = "/register/trial", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    public String reg(@RequestBody String res){
+        return res;
+
+    }
     @PostMapping ("/register")
     @ApiOperation(
             value = "Registers first time users",
