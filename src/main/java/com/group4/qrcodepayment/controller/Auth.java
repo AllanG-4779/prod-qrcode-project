@@ -56,11 +56,7 @@ public class Auth {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @PostMapping(value = "/register/trial", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public String reg(@RequestBody String res){
-        return res;
 
-    }
     @PostMapping ("/register")
     @ApiOperation(
             value = "Registers first time users",
