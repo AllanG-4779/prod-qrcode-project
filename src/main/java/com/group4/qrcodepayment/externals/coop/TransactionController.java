@@ -17,7 +17,7 @@ public class TransactionController {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping("/coop/transfer/result")
     public void getResultTransfer(@RequestBody Object body ){
-        logger.error("Received reply " + body.toString());
+        logger.error("Received reply " + body);
     }
     @PostMapping("/coop/transfer")
     public ResponseEntity<?> sendAmount() throws JsonProcessingException {

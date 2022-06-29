@@ -187,16 +187,16 @@ logger.info("Login token is "+ token);
 
 
     }
-    @PostMapping("/registration/verify")
+    @GetMapping("/registration/verify/{phone}")
     @ApiOperation(
                value="Checks whether a user is registered",
                httpMethod = "POST",
                 notes = "Accepts a phone number is a desired format and returns a OK response if user is found" +
                         " or A 404 if no user matches the passed details"
                             )
-    public ResponseEntity<Object> verifyRegistration(@RequestBody RegistrationVerification phone) throws SQLException {
+    public ResponseEntity<Object> verifyRegistration(@PathVariable String phone) throws SQLException {
 
-         Boolean user = userRegistrationService.numberRegistered(phone.getPhone());
+         Boolean user = userRegistrationService.numberRegistered(phone);
          Map<Object, Object> res = new LinkedHashMap<>();
 //         User with the phone number is found
          if (user){
