@@ -19,11 +19,11 @@ public class LoginDto {
     @NotBlank(message = "You must provide a user name")
     @ApiModelProperty(name = "Clients phone number or email address",
             required = true,
-            dataType = "String", allowableValues = "digits")
+             allowableValues = "String")
     private String phoneOrEmail;
     @NotNull
     @NotBlank
     @ApiModelProperty(notes = "A four digit pin secret",
-            name="PIN", dataType = "String")
+            name="PIN", allowableValues = "Numbers")
     private String password;
 }
