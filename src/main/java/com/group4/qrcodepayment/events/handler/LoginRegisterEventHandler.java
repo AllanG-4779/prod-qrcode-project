@@ -4,6 +4,7 @@ import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.dto.OtpDto;
 import com.group4.qrcodepayment.events.event.LoginRegisterEvent;
 
+import com.group4.qrcodepayment.exception.resterrors.TwilioFailedException;
 import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.service.OtpServiceImpl;
 import com.twilio.rest.api.v2010.account.Message;
@@ -46,7 +47,8 @@ try{
 
 }
 catch(com.twilio.exception.ApiException e){
-    throw new RuntimeException(e.getMessage());
+    throw new TwilioFailedException("QPay is using a trial Version of Twilio," +
+            " Please ask admin to include your number in list of allowed numbers");
 }
 
 

@@ -1,10 +1,8 @@
 package com.group4.qrcodepayment.exception;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
-import com.group4.qrcodepayment.exception.resterrors.InvalidUsernameOrPasswordException;
-import com.group4.qrcodepayment.exception.resterrors.OtpNotGeneratedException;
-import com.group4.qrcodepayment.exception.resterrors.PhoneNotConfirmedException;
-import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
+import com.group4.qrcodepayment.exception.resterrors.*;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -76,6 +74,15 @@ public class RestExceptionHandler extends Exception {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 response
         );
+    }
+    @ExceptionHandler(TwilioFailedException.class)
+    public ResponseEntity<?> handleTwilioError(TwilioFailedException ex){
+         Map<Object, Object> response = new LinkedHashMap<>();
+         response.put("code", HttpStatus.EXPECTATION_FAILED);
+         response.put("message", ex.getMessage());
+         response.put("sentAt", LocalDateTime.now());
+
+        return ResponseEntity.status(409).body(response);
     }
 
 
