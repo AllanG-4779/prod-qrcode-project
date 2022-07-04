@@ -186,7 +186,7 @@ logger.info("Login token is "+ token);
     @GetMapping("/registration/verify/{phone}")
     @ApiOperation(
                value="Checks whether a user is registered",
-               httpMethod = "POST",
+               httpMethod = "GET",
                 notes = "Accepts a phone number is a desired format and returns a OK response if user is found" +
                         " or A 404 if no user matches the passed details"
                             )

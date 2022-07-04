@@ -3,9 +3,7 @@ package com.group4.qrcodepayment.events.handler;
 import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.dto.OtpDto;
 import com.group4.qrcodepayment.events.event.LoginRegisterEvent;
-
 import com.group4.qrcodepayment.exception.resterrors.TwilioFailedException;
-import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.service.OtpServiceImpl;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -16,7 +14,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.swing.event.TreeWillExpandListener;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Random;

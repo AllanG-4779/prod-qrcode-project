@@ -94,8 +94,8 @@ public class CopBankConfiguration {
         ResponseEntity<?> res =  restTemplate.postForEntity("https://openapi-sandbox.co-opbank.co.ke/token",request, AccessTokenResDto.class);
 
         AccessTokenResDto token = (AccessTokenResDto) res.getBody();
-        log.error("ACCESS TOKEN FROM GET TOKEN METHOD "+ token.getAccess_token());
         assert token != null;
+        log.error("ACCESS TOKEN FROM GET TOKEN METHOD "+ token.getAccess_token());
         ACCESS_TOKEN = token.getAccess_token();
         return token.getAccess_token();
     }
