@@ -15,8 +15,10 @@ public class SwaggerConfig {
     public Docket apiDocConfig(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .paths(PathSelectors.ant("/auth/**"))
+                .paths(PathSelectors.ant("/**"))
+
                 .apis(RequestHandlerSelectors.basePackage("com.group4.qrcodepayment"))
+
                 .build()
                 .apiInfo(apiInfo());
 

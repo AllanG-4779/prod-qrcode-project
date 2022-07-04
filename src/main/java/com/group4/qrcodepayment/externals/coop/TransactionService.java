@@ -28,7 +28,7 @@ public class TransactionService {
 
   private final TransferDto transferDto = TransferDto.builder()
           .MessageReference(new RandomGenerator().generateRandom())
-          .CallBackUrl("https://decf-197-232-61-192.ngrok.io/coop/transfer/result")
+          .CallBackUrl("https://marabal.herokuapp.com/coop/transfer/result")
           .Source(
                 SourceDto
                         .builder()
