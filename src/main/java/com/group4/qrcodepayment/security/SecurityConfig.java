@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .authorizeRequests()
                .antMatchers(URLs.HOME).authenticated()
                .antMatchers(URLs.LOGIN,URLs.REGISTER,
-                       URLs.ASSERT_REGISTRATION, URLs.SEND_OTP, URLs.VALIDATE_OTP, "/coop/transfer/result").permitAll()
+                       URLs.ASSERT_REGISTRATION, URLs.SEND_OTP, URLs.VALIDATE_OTP, "/externals/coop/transfer/result").permitAll()
 //Tell the security that you don't want to use session based
                .and()
                .sessionManagement()
