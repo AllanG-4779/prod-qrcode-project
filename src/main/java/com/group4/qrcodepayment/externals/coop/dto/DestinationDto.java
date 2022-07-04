@@ -2,11 +2,15 @@ package com.group4.qrcodepayment.externals.coop.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.group4.qrcodepayment.util.RandomGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
-@Builder
+@Builder(builderClassName = "parentTransfer")
+@AllArgsConstructor
+@NoArgsConstructor
 public class DestinationDto {
     @JsonProperty("ReferenceNumber")
     private  String ReferenceNumber;

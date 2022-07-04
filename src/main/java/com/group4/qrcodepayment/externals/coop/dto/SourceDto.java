@@ -2,11 +2,13 @@ package com.group4.qrcodepayment.externals.coop.dto;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
-@Data
-@Builder
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder(builderClassName = "parentBuilder")
 public class SourceDto {
     @JsonProperty("AccountNumber")
     private String AccountNumber;

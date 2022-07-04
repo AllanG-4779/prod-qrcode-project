@@ -1,6 +1,7 @@
 package com.group4.qrcodepayment.externals.coop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.group4.qrcodepayment.externals.coop.dto.response.TransferResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ public class TransactionController {
     private TransactionService transactionService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping("/transfer/result")
-    public void getResultTransfer(@RequestBody Object body ){
-        logger.error("Received reply " + body);
+    public void getResultTransfer(@RequestBody TransferResponse body ){
+        logger.error("Received reply " + body.toString());
     }
     @PostMapping("/transfer")
     public ResponseEntity<?> sendAmount() throws JsonProcessingException {
