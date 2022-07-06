@@ -136,7 +136,7 @@ public class Auth {
 
         }
         String token = jwtUtils.generateToken(userDetails);
-logger.info("Login token is "+ token);
+        logger.info("Login token is "+ token);
        return  JWTokenDto.builder()
                                .token(token)
                .iat(LocalDateTime.now())
