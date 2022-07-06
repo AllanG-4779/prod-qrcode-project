@@ -48,12 +48,8 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-<!--        this was iclued after heroku failed to build due to jsonerror-->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20220320</version>
-        </dependency>
+
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -105,7 +101,7 @@
                         <exclude>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                        </exclude>
+        </exclude>
                     </excludes>
                 </configuration>
             </plugin>
