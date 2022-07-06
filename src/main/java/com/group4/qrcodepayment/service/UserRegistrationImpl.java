@@ -41,7 +41,7 @@ public class UserRegistrationImpl implements UserRegistrationService{
 
         }
         catch(Exception e){
-           throw new RegistrationFailedException();
+           throw new RegistrationFailedException("Registration failed please try again later");
         }
 
 
