@@ -1,6 +1,5 @@
 package com.group4.qrcodepayment.security.filter;
 
-import com.group4.qrcodepayment.security.CustomUserDetailsService;
 import com.group4.qrcodepayment.security.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,6 +19,8 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
     @Autowired
     private UserDetailsService userDetailsService;
+    @Autowired
+    private JWTUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -28,10 +29,13 @@ public class JWTFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 //        get the authorization
-        String authorization = request.getHeader("Authorization");
+        String authorization = request.getHeader("QP-Authorization");
+
         if(authorization !=null && authorization.startsWith("Bearer")){
              token = authorization.split(" ")[1];
-             username = new JWTUtils().getUsernameFromToken(token);
+
+             username = jwtUtils.getUsernameFromToken(token);
+
         }
         if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
 // In other words we are checking if there is a user in the token and that user is not yet
@@ -40,7 +44,7 @@ public class JWTFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
 //            Now, validate the details in the token against the actual user with the said username
-            if(new JWTUtils().validateToken(token, userDetails)){
+            if(jwtUtils.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
                         = new UsernamePasswordAuthenticationToken(userDetails,null,
                         userDetails.getAuthorities());

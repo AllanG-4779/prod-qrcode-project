@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,10 +42,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
        http.cors().and().csrf().disable()
                .authorizeRequests()
                .antMatchers(URLs.HOME).authenticated()
-               .antMatchers(URLs.LOGIN,URLs.REGISTER,
-                       URLs.ASSERT_REGISTRATION, URLs.SEND_OTP, URLs.VALIDATE_OTP, "/externals/coop/transfer/result").permitAll()
-//Tell the security that you don't want to use session based
+               .antMatchers(URLs.LOGIN,URLs.REGISTER,URLs.SEND_OTP,
+                URLs.ASSERT_REGISTRATION, URLs.VALIDATE_OTP, "/externals/coop/transfer/result").permitAll()
                .and()
+
+//Tell the security that you don't want to use session based
+
                .sessionManagement()
                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -52,10 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 //                                       .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
 //               Add the filter
-
-
-
-
     }
 
     @Override

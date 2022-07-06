@@ -22,6 +22,8 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
 
    Optional<UserInfo> findUserInfoByPhone(String phone);
 
+
+
    @Modifying
    @Transactional
    @Query("UPDATE UserInfo  useraccount SET useraccount.isConfirmed=true WHERE useraccount.phone=?1")

@@ -4,19 +4,19 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(builderClassName = "parentBuilder")
+@Builder
 public class SourceDto {
     @JsonProperty("AccountNumber")
-    private String AccountNumber;
+    public String AccountNumber;
     @JsonProperty("Amount")
-    private String Amount;
+    public String Amount;
     @JsonProperty("TransactionCurrency")
-    private String TransactionCurrency;
+    public  String TransactionCurrency;
     @JsonProperty("Narration")
-    private String Narration;
+    public String Narration;
 
 }

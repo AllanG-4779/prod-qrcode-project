@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -67,7 +68,7 @@ public class Auth {
 
             response = RegistrationDto.class
     )
-    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException {
+    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException, JSONException {
 
 //        check if user is available
        userRegistrationService.checkUserNameExists(details.getPhone());
@@ -214,7 +215,7 @@ logger.info("Login token is "+ token);
             notes = "Send an OTP to a specified number"
 
                 )
-    public void sendOtp(@RequestBody RegistrationVerification phone){
+    public void sendOtp (@RequestBody @Valid RegistrationVerification phone){
 
         loginRegistrationEventPublisher.authPublisher(phone.getPhone());
 
