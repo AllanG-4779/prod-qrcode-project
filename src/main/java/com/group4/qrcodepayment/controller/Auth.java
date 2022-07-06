@@ -5,6 +5,7 @@ import com.group4.qrcodepayment.dto.*;
 import com.group4.qrcodepayment.events.publisher.LoginRegistrationEventPublisher;
 import com.group4.qrcodepayment.exception.resterrors.PhoneNotConfirmedException;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
+import com.group4.qrcodepayment.exception.resterrors.RegistrationFailedException;
 import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.security.JWTUtils;
@@ -68,7 +69,7 @@ public class Auth {
 
             response = RegistrationDto.class
     )
-    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException, JSONException {
+    public ResponseEntity<Object> register(@RequestBody @Valid RegistrationDto details ) throws PhoneOrEmailExistsException, RegistrationFailedException, JSONException {
 
 //        check if user is available
        userRegistrationService.checkUserNameExists(details.getPhone());

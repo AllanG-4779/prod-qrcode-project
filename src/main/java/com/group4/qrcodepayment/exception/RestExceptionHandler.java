@@ -1,6 +1,7 @@
 package com.group4.qrcodepayment.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group4.qrcodepayment.customresponse.RegistrationResponse;
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
 import com.group4.qrcodepayment.exception.resterrors.*;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -84,7 +85,14 @@ public class RestExceptionHandler extends Exception {
 
         return ResponseEntity.status(409).body(response);
     }
-
+@ExceptionHandler(RegistrationFailedException.class)
+    public ResponseEntity<?> handleRegistrationException(RegistrationFailedException ex){
+         return ResponseEntity.status(500).body(RegistrationResponse.builder()
+                         .reason(HttpStatus.INTERNAL_SERVER_ERROR.toString())
+                         .code(500)
+                         .message(ex.getMessage())
+                 .build());
+}
 
 
 }
