@@ -3,12 +3,11 @@ package com.group4.qrcodepayment.service;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import com.group4.qrcodepayment.exception.resterrors.RegistrationFailedException;
 import com.group4.qrcodepayment.models.UserInfo;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 
 import java.sql.SQLException;
 
 public interface UserRegistrationService {
-    void userRegister(UserInfo user) throws JSONException, RegistrationFailedException;
+    void userRegister(UserInfo user) throws  RegistrationFailedException;
 
     void checkUserNameExists(String username) throws PhoneOrEmailExistsException;
 
