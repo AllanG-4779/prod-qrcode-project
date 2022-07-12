@@ -22,6 +22,7 @@ public class RegistrationDto {
     private String secondName;
     @NotNull(message= "ID number must be provided")
     @NotBlank(message ="ID number is blank, please correct it")
+    @Pattern(message = "ID to contain digits only",regexp = "^(\\d+)")
 
     private String idNo;
     @NotBlank(message = "password can never be blank")
@@ -30,6 +31,8 @@ public class RegistrationDto {
     @NotNull(message= "Did you forget to input your password")
 
     private String password;
+    @NotNull
+    @NotBlank
     @Pattern(regexp = "([17])(\\d){8}", message = "The phone number you entered is not valid")
     private String phone;
     @Pattern(regexp = "([a-zA-Z.\\d])+(@)(\\w){4,10}(.)(\\w){2,5}", message = "Email is not valid ")
