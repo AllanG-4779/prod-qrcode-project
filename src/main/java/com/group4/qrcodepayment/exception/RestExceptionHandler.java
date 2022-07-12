@@ -1,11 +1,8 @@
 package com.group4.qrcodepayment.exception;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group4.qrcodepayment.customresponse.RegistrationResponse;
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
 import com.group4.qrcodepayment.exception.resterrors.*;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
@@ -16,8 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
-import java.awt.image.ImageProducer;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,5 +140,14 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
                  map
          );
 
+    }
+    @ExceptionHandler({AuthenticationNotFoundException.class})
+    public ResponseEntity<?> handleAuthentication(AuthenticationNotFoundException ex){
+         ExceptionRes res  = ExceptionRes.builder()
+                 .code(401)
+                 .message("The system cannot verify your identity")
+                 .debugMessage(ex.getMessage())
+                 .build();
+         return ResponseEntity.status(401).body(res);
     }
 }

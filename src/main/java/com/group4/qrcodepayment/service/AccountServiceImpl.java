@@ -3,6 +3,7 @@ package com.group4.qrcodepayment.service;
 import com.group4.qrcodepayment.Repositories.AccountRepo;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.dto.AccountLinkingDto;
+import com.group4.qrcodepayment.exception.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -65,7 +67,7 @@ try{
 }
 
     }
-public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws UnsupportedBankException, AccountLinkFailedException {
+public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
         logger = LoggerFactory.getLogger(this.getClass());
         //verify if the bank is supported
         Bank bank =  bankService.getBankById(accountLink.getBankId());
@@ -75,6 +77,10 @@ public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws Unsup
 
 //     get the currently logged-in user
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        prevent the request from being sent if the user is not authenticated
+    if(!auth.isAuthenticated() || (auth instanceof AnonymousAuthenticationToken)){
+        throw new AuthenticationNotFoundException("You are not authenticated");
+    }
 
         UserInfo user = userRegistration.findUserByPhone(auth.getName());
 //        Now that you have the user: link the accounts
