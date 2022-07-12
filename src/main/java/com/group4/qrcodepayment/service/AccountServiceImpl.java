@@ -3,7 +3,7 @@ package com.group4.qrcodepayment.service;
 import com.group4.qrcodepayment.Repositories.AccountRepo;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.dto.AccountLinkingDto;
-import com.group4.qrcodepayment.exception.AuthenticationNotFoundException;
+import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;
@@ -15,12 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import java.util.UUID;
-
 import java.util.UUID;
 
 @Service

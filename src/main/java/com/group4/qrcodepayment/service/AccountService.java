@@ -1,7 +1,7 @@
 package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.dto.AccountLinkingDto;
-import com.group4.qrcodepayment.exception.AuthenticationNotFoundException;
+import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;

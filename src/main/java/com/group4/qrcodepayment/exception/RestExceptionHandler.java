@@ -3,6 +3,7 @@ package com.group4.qrcodepayment.exception;
 import com.group4.qrcodepayment.customresponse.RegistrationResponse;
 import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
 import com.group4.qrcodepayment.exception.resterrors.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.DisabledException;
@@ -141,7 +142,7 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
          );
 
     }
-    @ExceptionHandler({AuthenticationNotFoundException.class})
+    @ExceptionHandler({AuthenticationNotFoundException.class, ExpiredJwtException.class})
     public ResponseEntity<?> handleAuthentication(AuthenticationNotFoundException ex){
          ExceptionRes res  = ExceptionRes.builder()
                  .code(401)
@@ -149,5 +150,14 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
                  .debugMessage(ex.getMessage())
                  .build();
          return ResponseEntity.status(401).body(res);
+    }
+    @ExceptionHandler(InvalidJWTException.class)
+    public ResponseEntity<?>handleExpiredJwtException(InvalidJWTException ex){
+         ExceptionRes res = ExceptionRes.builder()
+                 .debugMessage(ex.getMessage())
+                 .code(403)
+                 .message("Authentication or Authorization failed")
+                 .build();
+         return ResponseEntity.status(403).body(res);
     }
 }

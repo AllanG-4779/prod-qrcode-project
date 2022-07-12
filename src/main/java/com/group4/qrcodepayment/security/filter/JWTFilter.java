@@ -1,6 +1,9 @@
 package com.group4.qrcodepayment.security.filter;
 
+import com.group4.qrcodepayment.exception.InvalidJWTException;
 import com.group4.qrcodepayment.security.JWTUtils;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,34 +33,42 @@ public class JWTFilter extends OncePerRequestFilter {
         String username = null;
 //        get the authorization
         String authorization = request.getHeader("QP-Authorization");
+        try {
+            if (authorization != null && authorization.startsWith("Bearer")) {
+                token = authorization.split(" ")[1];
 
-        if(authorization !=null && authorization.startsWith("Bearer")){
-             token = authorization.split(" ")[1];
+                username = jwtUtils.getUsernameFromToken(token);
 
-             username = jwtUtils.getUsernameFromToken(token);
-
-        }
-        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null) {
+            }
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 // In other words we are checking if there is a user in the token and that user is not yet
 //            authenticated
 //            if so, then the user is logged in
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
 //            Now, validate the details in the token against the actual user with the said username
-            if(jwtUtils.validateToken(token, userDetails)){
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                        = new UsernamePasswordAuthenticationToken(userDetails,null,
-                        userDetails.getAuthorities());
 
-                usernamePasswordAuthenticationToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-            }
+
+                if (jwtUtils.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                            = new UsernamePasswordAuthenticationToken(userDetails, null,
+                            userDetails.getAuthorities());
+
+                    usernamePasswordAuthenticationToken.setDetails(
+                            new WebAuthenticationDetailsSource().buildDetails(request)
+                    );
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
+
 
 //            We are done now proceed with the next filter chains
 
+            }
+            filterChain.doFilter(request, response);
+        } catch (ExpiredJwtException e) {
+            throw new InvalidJWTException("The token passed has expired, please login again");
+        }catch(MalformedJwtException ex){
+            throw new InvalidJWTException("The token passed is not valid");
         }
-        filterChain.doFilter(request,response);
     }
 }
