@@ -3,10 +3,13 @@ package com.group4.qrcodepayment.controller;
 import com.group4.qrcodepayment.Repositories.BankRepo;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.dto.AccountLinkingDto;
+import com.group4.qrcodepayment.dto.BankDto;
 import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;
+import com.group4.qrcodepayment.models.Bank;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
+import com.group4.qrcodepayment.service.BankServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,12 +26,19 @@ public class Accounts {
     @Autowired
     private UserRepoInt userRepoInt;
     @Autowired
+    private BankServiceImpl bankService;
+    @Autowired
     private AccountServiceImpl accountService;
     @PostMapping("/link")
     public AccountLinkingDto linkAccount(@RequestBody @Valid AccountLinkingDto accountLink) throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
 
         return accountService.linkAccount(accountLink);
 
+    }
+    @PostMapping("/add")
+    public Bank addBank(@RequestBody @Valid BankDto bank){
+
+        return bankService.addNewBank(bank);
     }
 
 }

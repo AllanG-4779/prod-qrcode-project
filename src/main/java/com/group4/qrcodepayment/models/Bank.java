@@ -19,7 +19,7 @@ public class Bank {
     @Id
     @Column(nullable = false)
         private String ipslCode;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
         private String name;
     @Column(nullable = false)
     private  final Boolean supported=false;
