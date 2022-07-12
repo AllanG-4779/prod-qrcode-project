@@ -1,17 +1,22 @@
 package com.group4.qrcodepayment.controller;
 
 import com.group4.qrcodepayment.config.JWTConfig;
+import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.dto.*;
 import com.group4.qrcodepayment.events.publisher.LoginRegistrationEventPublisher;
 import com.group4.qrcodepayment.exception.resterrors.PhoneNotConfirmedException;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import com.group4.qrcodepayment.exception.resterrors.RegistrationFailedException;
+import com.group4.qrcodepayment.exception.resterrors.TwilioFailedException;
 import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.security.JWTUtils;
 import com.group4.qrcodepayment.security.PasswordConfig;
 import com.group4.qrcodepayment.service.OtpServiceImpl;
 import com.group4.qrcodepayment.service.UserRegistrationService;
+import com.twilio.exception.ApiException;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +38,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
-
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
 public class Auth {
@@ -53,6 +57,8 @@ public class Auth {
     private OtpServiceImpl otpService;
     @Autowired
     private JWTConfig jwtConfig;
+    @Autowired
+    private TwilioConfig twilioConfig;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -80,16 +86,33 @@ public class Auth {
                 .password(passwordConfig.passwordEncoder().encode(details.getPassword()))
                 .phone(details.getPhone())
                 .roles("USER")
+                .idNo(details.getIdNo())
 
                 .firstName(details.getFirstName())
                 .secondName(details.getSecondName())
                 .build();
 
-        userRegistrationService.userRegister(user);
-//        publish that registration has been successfully committed
-        loginRegistrationEventPublisher.authPublisher(details.getPhone());
 
-         return ResponseEntity.status(201).body(details);
+
+//        Sea message for successful registration
+        try{
+            userRegistrationService.userRegister(user);
+            Message.creator(
+                    new PhoneNumber("+254"+user.getPhone()),
+                    new PhoneNumber(twilioConfig.getTrialNumber()),
+                    "Thank you "+ user.getFirstName()+" "+user.getSecondName() +
+                            " for registering on QPay Platform\n" +
+                            "You won't regret getting on board\n" +
+                            "Enjoy!!!"
+            ).create();
+
+
+        }catch(ApiException ex){
+            throw new TwilioFailedException(ex.getMessage(), "Cannot send SMS at this time");
+        }
+
+
+        return ResponseEntity.status(201).body(details);
 
 
     }
@@ -110,10 +133,6 @@ public class Auth {
 
     public JWTokenDto login(@RequestBody @Valid LoginDto loginCredentials)
             throws Exception {
-//        check if the user account is confirmed
-
-//        login the user
-        logger.info("Authentication process has commenced for user "+ loginCredentials.getPhoneOrEmail());
 
         try{
             authenticationManager.authenticate(
@@ -153,7 +172,7 @@ public class Auth {
                     "correctness of the OTP"
 
     )
-    public ResponseEntity<Object> validateOTP(@RequestBody VerificationCode code){
+    public ResponseEntity<Object> validateOTP(@RequestBody @Valid VerificationCode code){
 
         OneTimeCode otpDto = otpService.getOtp(code.getPhone());
         Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -177,10 +196,10 @@ public class Auth {
 
         }
 
-        map.put("code", 403);
-        map.put("message", HttpStatus.FORBIDDEN);
+        map.put("code",HttpStatus.CONFLICT );
+        map.put("message", "Invalid OTP please ask for another one");
         map.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.status(403).body(map);
+        return ResponseEntity.status(409).body(map);
 
 
     }

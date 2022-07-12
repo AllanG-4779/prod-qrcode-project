@@ -3,14 +3,18 @@ package com.group4.qrcodepayment.service;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
 import com.group4.qrcodepayment.exception.resterrors.RegistrationFailedException;
+import com.group4.qrcodepayment.models.Bank;
 import com.group4.qrcodepayment.models.QPayAccount;
 import com.group4.qrcodepayment.models.UserInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -75,4 +79,20 @@ public class UserRegistrationImpl implements UserRegistrationService{
     public void setAccountVerified(String phone) {
         userRepo.verifyAccount(phone);
     }
+
+    @Override
+    public UserInfo findUserByPhone(String phone) {
+        try{
+
+            return userRepo.findByUsername(phone);
+        }catch (Exception e){
+            throw new RuntimeException("User identity could not be established");
+        }
+    }
+
+   // @Override
+//    public UserInfo findUserByAccountAndBank(String accountNumber, Bank bankId) {
+//        return userRepo.findUserByBankIdAndAccountNumber(accountNumber, bankId);
+//    }
+
 }

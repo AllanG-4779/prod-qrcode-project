@@ -6,16 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@IdClass(AccountId.class)
-public class Account {
 
-
+public class Account  {
+    @Id
+    private String accountId;
     @Column(nullable = false)
     private String accountNumber;
 
@@ -24,12 +25,12 @@ public class Account {
     )
     @JoinColumn(
            referencedColumnName = "userId",
-           name="user_Id", nullable = false
+           name="userId", nullable = false
     )
-    @Id
+
     private UserInfo userId;
     @ManyToOne
-    @JoinColumn(referencedColumnName = "ipslCode", name="bank_id", nullable = false)
-    @Id
+    @JoinColumn(referencedColumnName = "ipslCode", name="bankId", nullable = false)
+
     private Bank bankId;
 }

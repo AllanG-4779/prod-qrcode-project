@@ -44,12 +44,12 @@ try{
 
 }
 catch(com.twilio.exception.ApiException e){
-    throw new TwilioFailedException("QPay is using a trial Version of Twilio," +
+    throw new TwilioFailedException(e.getMessage(), "QPay is using a trial Version of Twilio," +
             " Please ask admin to include your number in list of allowed numbers");
 }
 
 
-    //save the OTP to the database
+
     OtpDto code = OtpDto.builder()
             .code(OTP)
             .issueAt(LocalDateTime.now())

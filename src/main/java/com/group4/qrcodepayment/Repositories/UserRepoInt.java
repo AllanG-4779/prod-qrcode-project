@@ -22,6 +22,9 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
 
    Optional<UserInfo> findUserInfoByPhone(String phone);
 
+   @Query("SELECT user FROM UserInfo user INNER JOIN Account acc ON user.userId = acc.userId WHERE acc.accountNumber =?1 AND acc.bankId=?2")
+   UserInfo findUserByBankIdAndAccountNumber(String acc_number, String bankId);
+
 
 
    @Modifying

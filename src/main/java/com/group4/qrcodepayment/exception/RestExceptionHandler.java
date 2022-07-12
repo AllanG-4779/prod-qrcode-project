@@ -8,6 +8,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
+import java.awt.image.ImageProducer;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -79,11 +82,12 @@ public class RestExceptionHandler extends Exception {
     @ExceptionHandler(TwilioFailedException.class)
     public ResponseEntity<?> handleTwilioError(TwilioFailedException ex){
          Map<Object, Object> response = new LinkedHashMap<>();
-         response.put("code", HttpStatus.EXPECTATION_FAILED);
-         response.put("message", ex.getMessage());
+         response.put("code", 408);
+         response.put("message", ex.getUserMessage());
          response.put("sentAt", LocalDateTime.now());
+         response.put("debugMessage", ex.getMessage());
 
-        return ResponseEntity.status(409).body(response);
+        return ResponseEntity.status(408).body(response);
     }
 @ExceptionHandler(RegistrationFailedException.class)
     public ResponseEntity<?> handleRegistrationException(RegistrationFailedException ex){
@@ -91,8 +95,55 @@ public class RestExceptionHandler extends Exception {
                          .reason(HttpStatus.INTERNAL_SERVER_ERROR.toString())
                          .code(500)
                          .message(ex.getMessage())
+
+
                  .build());
 }
+//Hdndle user account disabled exception
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<?> handleDisabledException(DisabledException ex){
+         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+         map.put("code", 403);
+         map.put("message", "Your account is locked, please verify your phone number to unlock it");
+         map.put("debugMessage", ex.getMessage());
+         return ResponseEntity.status(403).body(map);
+    }
+//    handle the account number is null
+    @ExceptionHandler(BankNotLinkedException.class)
+    public ResponseEntity<?> handleBankNotLinkedException(BankNotLinkedException ex){
+         Map<String, Object> map = new LinkedHashMap<>();
+         map.put("code", 404);
+         map.put("message", ex.getMessage());
+         map.put("debugMessage", ex.getDebugMessage());
+         return ResponseEntity.status(404).body(map);
+    }
+    @ExceptionHandler(UnsupportedBankException.class)
+public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException ex){
+          Map<String, Object> object = new LinkedHashMap<>();
+          object.put("code", 499);
+          object.put("message", ex.getMessage());
+          object.put("reason", "Bank not supported");
+          return ResponseEntity.status(499).body(object);
 
+}
+@ExceptionHandler(AccountLinkFailedException.class)
+    public ResponseEntity<?> handleAccountLinkException(AccountLinkFailedException ex){
+        Map<String, Object> object = new LinkedHashMap<>();
+        object.put("code", 500);
+        object.put("message", "Something went wrong when linking your account");
+        object.put("debugMessage",ex.getMessage());
+        return ResponseEntity.status(499).body(object);
 
+    }
+    @ExceptionHandler(CopBankTransactionException.class)
+    public ResponseEntity<?> handleCopBankTransactionException(CopBankTransactionException e){
+        Map<Object, Object> map  = new LinkedHashMap<>();
+        map.put("code", HttpStatus.BAD_REQUEST);
+        map.put("message", "Request cannot be completed at the moment");
+        map.put("debugMessage", e.getMessage());
+         return ResponseEntity.status(400).body(
+                 map
+         );
+
+    }
 }

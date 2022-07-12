@@ -16,4 +16,8 @@ public interface UserRegistrationService {
     Boolean numberRegistered(String phone) throws SQLException;
 
     void setAccountVerified(String phone);
+
+    UserInfo findUserByPhone(String phone);
+
+   // UserInfo findUserByAccountAndBank(String accountNumber, String bankId);
 }

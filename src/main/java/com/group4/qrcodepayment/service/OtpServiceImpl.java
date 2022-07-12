@@ -34,6 +34,7 @@ public class OtpServiceImpl implements OtpService{
     }
 
     @Override
+
     public OneTimeCode getOtp(String phone) {
        OneTimeCode dto = otpRepository.findByPhoneNotExpired(phone);
 //       get those codes that hasn't expired

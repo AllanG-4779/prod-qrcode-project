@@ -14,7 +14,7 @@ public class LoginRegistrationEventPublisher {
     private ApplicationEventPublisher eventPublisher;
 
     public void authPublisher(String phoneNumber){
-        LoginRegisterEvent loginRegisterEvent = new LoginRegisterEvent( phoneNumber);
+        LoginRegisterEvent loginRegisterEvent = new LoginRegisterEvent(this);
         loginRegisterEvent.setPhoneNumber(phoneNumber);
         eventPublisher.publishEvent(loginRegisterEvent);
 
