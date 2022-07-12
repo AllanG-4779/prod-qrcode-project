@@ -16,14 +16,14 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class AccountLinkingDto {
     @NotNull(message = "Bank ID is required")
-    @Length(min=1, max=3)
+    @Length(min=1, max=3, message = "Length between 9 and 15")
     @ApiModelProperty(
             allowableValues = "integers",
             name = "IPSL bank code"
     )
     private String bankId;
     @Length(min=9, max=15)
-    @Pattern(regexp = "\\d", message = "Account number cannot contain characters")
+    @Pattern(regexp = "\\d+", message = "Account number cannot contain characters")
     @NotNull(message = "Account number cannot be null")
     @ApiModelProperty(
             name = "Account number of the bank to be linked"
