@@ -19,4 +19,11 @@ public interface OtpRepository extends JpaRepository<OneTimeCode, Long> {
     @Transactional
     @Query("DELETE FROM OneTimeCode otp WHERE otp.owner=?1 ")
     void deleteByOwner(String owner);
+    @Transactional
+    @Modifying
+    @Query("UPDATE OneTimeCode code SET code.code=?1 where code.owner =?2")
+    void updateToken(String token, String owner);
+    OneTimeCode getOneTimeCodeByCode(String code);
+
+
 }

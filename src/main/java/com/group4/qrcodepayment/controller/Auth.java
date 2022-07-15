@@ -3,6 +3,7 @@ package com.group4.qrcodepayment.controller;
 import com.group4.qrcodepayment.config.JWTConfig;
 import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.dto.*;
+import com.group4.qrcodepayment.events.handler.LoginRegisterEventHandler;
 import com.group4.qrcodepayment.events.publisher.LoginRegistrationEventPublisher;
 import com.group4.qrcodepayment.exception.resterrors.PhoneNotConfirmedException;
 import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException;
@@ -18,6 +19,9 @@ import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import io.swagger.annotations.ApiOperation;
+import org.jasypt.util.text.AES256TextEncryptor;
+import org.jasypt.util.text.StrongTextEncryptor;
+import org.jasypt.util.text.TextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -57,6 +63,8 @@ public class Auth {
     private OtpServiceImpl otpService;
     @Autowired
     private JWTConfig jwtConfig;
+    @Autowired
+    private LoginRegisterEventHandler registerEventHandler;
     @Autowired
     private TwilioConfig twilioConfig;
 
@@ -178,7 +186,7 @@ public class Auth {
         Logger logger = LoggerFactory.getLogger(this.getClass());
         logger.debug("Returned OTP " + otpDto.toString());
         Map<Object, Object> map = new LinkedHashMap<>();
-        String message = null;
+        String accountVerifiedToken = null;
 //        Check if the code submitted is the same and has not expired
 
         if(otpDto.getCode().equals(code.getCode()) &&
@@ -192,6 +200,20 @@ public class Auth {
             map.put("code", 201);
             map.put("message", "Successfully verified");
             map.put("timestamp", LocalDateTime.now());
+//          update the account with account verified token {activated time, phone number, user_id}
+            if(userRegistrationService.findUserByPhone(code.getPhone()).isConfirmed()) {
+//              AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
+                StrongTextEncryptor encryptor = new StrongTextEncryptor();
+                encryptor.setPassword("pass");
+
+              String message = encryptor.encrypt("" + LocalDateTime.now() + "=" +
+                      userRegistrationService
+                              .findUserByPhone(code.getPhone()).getPhone());
+
+                otpService.updateOtp(message, code.getPhone());
+
+               map.put("account_token", message);
+            }
             return ResponseEntity.status(200).body(map);
 
         }
@@ -237,6 +259,58 @@ public class Auth {
     public void sendOtp (@RequestBody @Valid RegistrationVerification phone){
 
         loginRegistrationEventPublisher.authPublisher(phone.getPhone());
+
+    }
+    @GetMapping("/forgot")
+    public void forgotPassword(@RequestParam String phoneNumber){
+//        Given the phone number, send the otp
+
+       String code = registerEventHandler.getOTP();
+        Message.creator(
+                new PhoneNumber("+254"+phoneNumber),
+                new PhoneNumber(twilioConfig.getTrialNumber()),
+
+                "\nIf you've requested an OTP to reset your password use the code below\n" +
+                        "The code expires in 1 minute\n\n\n"+code
+        ).create();
+//Save the otp
+        OtpDto otpDto = OtpDto.builder().code(code)
+                .expireAt(LocalDateTime.now()
+                        .plusMinutes(1))
+                .issueAt(LocalDateTime.now())
+                .owner(phoneNumber)
+                .build();
+
+        otpService.addOtp(otpDto);
+    }
+    @PostMapping("/password/reset")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto) throws RegistrationFailedException {
+
+//         Verify the token passed
+        OneTimeCode otpToken = otpService.getOtpByCode(passwordResetDto.getToken());
+        if (otpToken == null){
+            throw new RuntimeException("Password reset request aborted");
+        }
+        StrongTextEncryptor encryptor = new StrongTextEncryptor();
+        encryptor.setPassword("pass");
+
+        String [] details = encryptor.decrypt(otpToken.getCode()).split("=");
+        if(!LocalDateTime.now().isBefore(LocalDateTime.parse(details[0]).plusMinutes(30))){
+
+            throw new RuntimeException("Password reset token has expired");
+        }
+//        otherwise find the user
+        UserInfo user = userRegistrationService.findUserByPhone(details[1]);
+
+//        update the user
+        user.setPassword(passwordConfig.passwordEncoder()
+                .encode(passwordResetDto.getPassword()));
+        userRegistrationService.userRegister(user);
+
+//        delete the token from the db
+        otpService.deleteOtp(details[1]);
+
+        return ResponseEntity.status(201).body("Password created successfully");
 
     }
 

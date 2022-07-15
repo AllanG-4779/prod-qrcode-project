@@ -7,4 +7,7 @@ public interface OtpService {
 
     void addOtp(OtpDto otpDto);
     OneTimeCode getOtp(String phone);
+    OneTimeCode getOtpByCode(String token);
+    void deleteOtp(String phone);
+    void updateOtp(String token, String owner);
 }

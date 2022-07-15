@@ -54,7 +54,7 @@ public class Accounts {
     }
 
     @GetMapping("/myqr-code")
-    public ResponseEntity<?> generateMyQr(@RequestParam int width, @RequestParam int  height) throws IOException, WriterException, AuthenticationNotFoundException {
+    public byte[] generateMyQr(@RequestParam int width, @RequestParam int  height) throws IOException, WriterException, AuthenticationNotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
         throw new AuthenticationNotFoundException("Seems you are not authenticated, please login ");
@@ -71,10 +71,8 @@ public class Accounts {
         String message = "user_id="+user.getUserId()+"phone="+user.getPhone();
         String hash = textEncryptor.encrypt(message);
 
-        byte[] myCode = QRCodeGenerator.getQRcodeImage(hash, width, height);
-        LinkedHashMap<String, Object> linkedHashMap = new LinkedHashMap<>();
-        linkedHashMap.put("qrCodeString", myCode );
-        return ResponseEntity.status(201).body(linkedHashMap);
+       return QRCodeGenerator.getQRcodeImage(hash, width, height);
+
     }
 
 }

@@ -25,8 +25,7 @@ import java.time.LocalDateTime;
 @RequestMapping("/externals/coop")
 
 public class TransactionController {
-    @Autowired
-    private TwilioConfig twilioConfig;
+
     @Autowired
     private TransactionServiceImpl allTransactionService;
     @Autowired

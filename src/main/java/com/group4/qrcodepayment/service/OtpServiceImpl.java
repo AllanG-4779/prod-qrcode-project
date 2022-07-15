@@ -48,4 +48,19 @@ public class OtpServiceImpl implements OtpService{
 
         return dto;
     }
+
+    @Override
+    public OneTimeCode getOtpByCode(String token) {
+        return otpRepository.getOneTimeCodeByCode(token);
+    }
+
+    @Override
+    public void deleteOtp(String phone) {
+        otpRepository.deleteByOwner(phone);
+    }
+
+    @Override
+    public void updateOtp(String token, String owner) {
+        otpRepository.updateToken(token, owner);
+    }
 }
