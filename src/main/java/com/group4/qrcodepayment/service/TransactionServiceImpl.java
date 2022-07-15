@@ -2,6 +2,7 @@ package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.Repositories.*;
 import com.group4.qrcodepayment.dto.TransactionDto;
+import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.models.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class TransactionServiceImpl implements Transactionservice {
 //    This method saves a transaction to a database.
 //    Receives a transaction dto that contains all the request that are required to save a transaction
     @Override
-    public void addTransaction(TransactionDto transactionDto) {
+    public void addTransaction(TransactionDto transactionDto) throws TransactionNotFoundException {
 //         get the transaction type
         Optional<TransactionType> transactionType = transactionTypes.findById("D");
 //        Given the user's account number and the bank ID can you fetch the user's account
@@ -35,7 +36,7 @@ public class TransactionServiceImpl implements Transactionservice {
 //                        (transactionDto.getSourceAccount(), bank);
 
         if (!transactionType.isPresent()){
-            throw new RuntimeException("Bad transaction passed");
+            throw new TransactionNotFoundException("Bad transaction passed");
         }
         Transactions transactions = Transactions.builder()
                 .amount(transactionDto.getTransactionAmount())

@@ -196,10 +196,10 @@ public class Auth {
 
         }
 
-        map.put("code",HttpStatus.CONFLICT );
+        map.put("code",HttpStatus.FORBIDDEN );
         map.put("message", "Invalid OTP please ask for another one");
         map.put("timestamp", LocalDateTime.now());
-        return ResponseEntity.status(409).body(map);
+        return ResponseEntity.status(403).body(map);
 
 
     }

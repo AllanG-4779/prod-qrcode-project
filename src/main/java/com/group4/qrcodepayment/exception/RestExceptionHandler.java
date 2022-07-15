@@ -160,4 +160,12 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
                  .build();
          return ResponseEntity.status(403).body(res);
     }
+    @ExceptionHandler(TransactionNotFoundException.class)
+    public ResponseEntity<?> handleTransactionNotSpecifiedException(TransactionNotFoundException ex){
+
+         return  ResponseEntity.status(400).body(ExceptionRes.builder().code(400)
+                 .message("Transaction type not specified")
+                 .debugMessage(ex.getMessage()).build());
+
+    }
 }

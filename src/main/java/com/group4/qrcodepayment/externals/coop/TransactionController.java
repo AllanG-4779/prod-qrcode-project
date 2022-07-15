@@ -6,18 +6,14 @@ import com.group4.qrcodepayment.dto.TransactionDto;
 import com.group4.qrcodepayment.events.publisher.TransactionRecordPublisher;
 import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.CopBankTransactionException;
-import com.group4.qrcodepayment.exception.resterrors.TwilioFailedException;
+import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.externals.coop.dto.PaymentDetailsFromUser;
 import com.group4.qrcodepayment.externals.coop.dto.response.TransferResponse;
 import com.group4.qrcodepayment.service.TransactionServiceImpl;
-import com.twilio.exception.ApiException;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +35,7 @@ public class TransactionController {
     private TransactionService transactionService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping("/transfer/result")
-    public void getResultTransfer(@RequestBody TransferResponse body ){
+    public void getResultTransfer(@RequestBody TransferResponse body ) throws TransactionNotFoundException {
         TransactionDto transactionDto = TransactionDto.builder()
                 .transactionType("D")
                 .date(LocalDateTime.now())
