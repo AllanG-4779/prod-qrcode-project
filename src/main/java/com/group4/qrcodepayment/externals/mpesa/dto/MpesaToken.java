@@ -12,5 +12,4 @@ import lombok.NoArgsConstructor;
 public class MpesaToken {
     private String expires_in;
     private String access_token;
-
 }
