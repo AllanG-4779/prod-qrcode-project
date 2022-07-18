@@ -51,8 +51,8 @@ public class Config {
       headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_JSON_VALUE));
 
         RegisterUrlReqBody registerUrlReqBody = RegisterUrlReqBody.builder()
-                .ConfirmationURL("localhost:8001/mpesa/confirmation")
-                .ValidationURL("localhost:8001/mpesa/validation")
+                .ConfirmationURL("https://marabal.herokuapp.com/mpesa/confirmation")
+                .ValidationURL("https://marabal.herokuapp.com/mpesa/validation")
                 .ResponseType("Canceled")
                 .ShortCode(600999)
                 .build();
