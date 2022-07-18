@@ -195,13 +195,13 @@ public class Auth {
 
 
 //            SET THE ACCOUNT AS VERIFIED
-            userRegistrationService.setAccountVerified(code.getPhone());
+
 
             map.put("code", 201);
             map.put("message", "Successfully verified");
             map.put("timestamp", LocalDateTime.now());
 //          update the account with account verified token {activated time, phone number, user_id}
-            if(userRegistrationService.findUserByPhone(code.getPhone()).isConfirmed()) {
+            if(userRegistrationService.findUserByPhone(code.getPhone()) != null && userRegistrationService.findUserByPhone(code.getPhone()).isConfirmed()) {
 //              AES256TextEncryptor aes256TextEncryptor = new AES256TextEncryptor();
                 StrongTextEncryptor encryptor = new StrongTextEncryptor();
                 encryptor.setPassword("pass");
@@ -213,6 +213,8 @@ public class Auth {
                 otpService.updateOtp(message, code.getPhone());
 
                map.put("account_token", message);
+            }else{
+                userRegistrationService.setAccountVerified(code.getPhone());
             }
             return ResponseEntity.status(200).body(map);
 
