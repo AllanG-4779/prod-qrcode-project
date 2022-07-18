@@ -27,12 +27,12 @@ public class MpesaControllers {
     public Object fundQPay() throws JsonProcessingException {
         return mpesaConfig.fundAccountViaMpesa();
     }
-    @PostMapping("/mobile/confirmation")
+    @PostMapping("/v1/confirmation")
 
     public void confirmationUrl(@RequestBody Object req){
       log.error(req.toString());
     }
-    @PostMapping("/mpesa/validation")
+    @PostMapping("/v1/validation")
     public  void validationUrl(@RequestBody String req){
         log.info(req);
     }
