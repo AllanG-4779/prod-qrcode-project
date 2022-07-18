@@ -95,7 +95,7 @@ public class Config {
                 .BusinessShortCode("174379")
                 .Password(password)
                 .Amount("1")
-                .CallBackURL("https://marabal.herokuapp.com/v1/confirmation")
+                .CallBackURL("https://marabal.herokuapp.com/mobile/confirmation")
                 .PartyA("254796407365")
                 .PartyB("174379")
                 .PhoneNumber("254796407365")
