@@ -23,6 +23,10 @@ public class MpesaControllers {
     public Object register() throws JsonProcessingException {
         return mpesaConfig.registerUrl();
     }
+    @PostMapping("/mpesa/transfer")
+    public Object fundQPay() throws JsonProcessingException {
+        return mpesaConfig.fundAccountViaMpesa();
+    }
     @PostMapping("/mpesa/confirmation")
 
     public void confirmationUrl(@RequestBody Object req){
