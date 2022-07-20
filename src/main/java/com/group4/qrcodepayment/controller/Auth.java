@@ -232,11 +232,14 @@ public class Auth {
     public ResponseEntity<Object> verifyRegistration(@PathVariable String phone) throws SQLException {
 
          Boolean user = userRegistrationService.numberRegistered(phone);
+         UserInfo userFound = userRegistrationService.findUserByPhone(phone);
          Map<Object, Object> res = new LinkedHashMap<>();
 //         User with the phone number is found
          if (user){
              res.put("code", 200);
              res.put("message", "Number registered");
+             res.put("email",userFound.getEmail() );
+             res.put("fullName", userFound.getFirstName()+" "+userFound.getSecondName());
              res.put("timestamp", LocalDateTime.now());
              return ResponseEntity.status(200).body(res);
          }
