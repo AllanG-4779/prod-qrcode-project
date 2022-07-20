@@ -11,6 +11,7 @@ import com.group4.qrcodepayment.exception.resterrors.RegistrationFailedException
 import com.group4.qrcodepayment.exception.resterrors.TwilioFailedException;
 import com.group4.qrcodepayment.models.OneTimeCode;
 import com.group4.qrcodepayment.models.UserInfo;
+import com.group4.qrcodepayment.security.CustomUserDetails;
 import com.group4.qrcodepayment.security.JWTUtils;
 import com.group4.qrcodepayment.security.PasswordConfig;
 import com.group4.qrcodepayment.service.OtpServiceImpl;
@@ -154,7 +155,7 @@ public class Auth {
        }
 
 //        Having passed the test: Authentication test, now create the token
-        final UserDetails userDetails = userDetailsService
+        final CustomUserDetails userDetails = (CustomUserDetails) userDetailsService
                 .loadUserByUsername(loginCredentials.getPhoneOrEmail());
 //        check if account is enabled
         if(!userDetails.isEnabled()){

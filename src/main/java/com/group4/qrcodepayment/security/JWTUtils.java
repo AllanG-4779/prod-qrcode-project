@@ -61,14 +61,12 @@ public class JWTUtils implements Serializable {
 
 
     //generate token for user
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(CustomUserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
-//      Give me the user
-        UserInfo user = userRegistration.findUserByPhone(userDetails.getUsername());
 
-        claims.put("email", user.getEmail());
-        claims.put("name", user.getSecondName()+" "+user.getFirstName());
+        claims.put("email", userDetails.getEmail());
+        claims.put("name", userDetails.getFullName());
         return doGenerateToken(claims, userDetails.getUsername());
     }
 

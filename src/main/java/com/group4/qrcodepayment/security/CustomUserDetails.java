@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 public class CustomUserDetails implements UserDetails {
     private final UserInfo user;
+    private String email;
+    private String fullName;
     public CustomUserDetails(UserInfo user){
         this.user = user;
     }
@@ -22,18 +24,19 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Logger logger = LoggerFactory.getLogger(CustomUserDetails.class);
 
 
-      Collection<SimpleGrantedAuthority> coll =  Arrays.stream(user.getRoles().split(" "))
 
-              .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        return Arrays.stream(user.getRoles().split(" "))
 
-                logger.info("The logged in user has the following Roles "+ coll);
-
-      return coll;
+                .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
-
+    public String getEmail(){
+        return user.getEmail();
+    }
+    public String getFullName(){
+        return user.getFirstName()+" "+user.getSecondName();
+    }
     @Override
     public String getPassword() {
         return user.getPassword();
