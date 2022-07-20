@@ -1,6 +1,8 @@
 package com.group4.qrcodepayment.security;
 
 import com.group4.qrcodepayment.config.JWTConfig;
+import com.group4.qrcodepayment.models.UserInfo;
+import com.group4.qrcodepayment.service.UserRegistrationImpl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -24,7 +26,8 @@ public class JWTUtils implements Serializable {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private JWTConfig config;
-//
+    @Autowired
+    private UserRegistrationImpl userRegistration;
 
 
     //retrieve username from jwt token
@@ -61,6 +64,11 @@ public class JWTUtils implements Serializable {
     public String generateToken(UserDetails userDetails) {
 
         Map<String, Object> claims = new HashMap<>();
+//      Give me the user
+        UserInfo user = userRegistration.findUserByPhone(userDetails.getUsername());
+
+        claims.put("email", user.getEmail());
+        claims.put("name", user.getSecondName()+" "+user.getFirstName());
         return doGenerateToken(claims, userDetails.getUsername());
     }
 
