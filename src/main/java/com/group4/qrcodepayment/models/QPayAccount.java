@@ -16,7 +16,7 @@ public class QPayAccount {
     @Id
     private String accountId;
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id", referencedColumnName = "userId", unique = true)
     private UserInfo userId;
     private Integer balance=0;
 
