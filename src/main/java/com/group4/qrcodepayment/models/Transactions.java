@@ -24,10 +24,11 @@ public class Transactions {
     private String destinationAccount;
     @Column(nullable = false)
     private String amount;
-
+    private boolean completed=false;
     @ManyToOne
     @JoinColumn(name="transaction_type", referencedColumnName = "transactionId", nullable = false)
     private TransactionType transactionType;
+
     private LocalDateTime dateTime;
 
 

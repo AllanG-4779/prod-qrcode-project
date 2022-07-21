@@ -5,7 +5,7 @@ import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.dto.AccountLinkingDto;
 import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
-import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
+import com.group4.qrcodepayment.exception.resterrors.BankLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;
 import com.group4.qrcodepayment.models.Account;
 import com.group4.qrcodepayment.models.Bank;
@@ -36,7 +36,7 @@ public class AccountServiceImpl implements AccountService{
     private Logger logger;
 
     @Override
-    public String getUserAccountNumber() throws BankNotLinkedException {
+    public String getUserAccountNumber() throws BankLinkedException {
         String username = null;
 //        Get the currently logged-in user
         Authentication auth  = SecurityContextHolder.getContext().getAuthentication();
@@ -54,20 +54,20 @@ public class AccountServiceImpl implements AccountService{
 
 
 //        Get the bank of currently logged in user: which is coperative bank
-        Bank copBank = bankService.getBankById("11");
+        Bank copBank = bankService.getBankByIpslCode("11");
 try{
     return accountRepo
             .findAccountByUserIdAndBankId(loggedUser,copBank).getAccountNumber();
 
 }catch(NullPointerException ex){
-    throw new BankNotLinkedException("Source Bank account number not found", ex.getMessage());
+    throw new BankLinkedException("Source Bank account number not found", ex.getMessage());
 }
 
     }
 public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
         logger = LoggerFactory.getLogger(this.getClass());
         //verify if the bank is supported
-        Bank bank =  bankService.getBankById(accountLink.getBankId());
+        Bank bank =  bankService.getBankByIpslCode(accountLink.getBankId());
         if (bank == null || !bank.getSupported()){
             throw new UnsupportedBankException("Bank not supported yet.");
         }

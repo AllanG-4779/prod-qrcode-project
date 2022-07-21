@@ -105,8 +105,8 @@ public class RestExceptionHandler extends Exception {
          return ResponseEntity.status(403).body(map);
     }
 //    handle the account number is null
-    @ExceptionHandler(BankNotLinkedException.class)
-    public ResponseEntity<?> handleBankNotLinkedException(BankNotLinkedException ex){
+    @ExceptionHandler(BankLinkedException.class)
+    public ResponseEntity<?> handleBankNotLinkedException(BankLinkedException ex){
          Map<String, Object> map = new LinkedHashMap<>();
          map.put("code", 404);
          map.put("message", ex.getMessage());
@@ -126,8 +126,16 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
     public ResponseEntity<?> handleAccountLinkException(AccountLinkFailedException ex){
         Map<String, Object> object = new LinkedHashMap<>();
         object.put("code", 500);
-        object.put("message", "Something went wrong when linking your account");
-        object.put("debugMessage",ex.getMessage());
+        if(ex.getMessage().contains("constraint [accountOwner]")){
+            object.put("message", "Account is already linked");
+            object.put("debugMessage","Duplicate entry for the same bank and owner");
+        }else{
+
+            object.put("message", "Something went wrong when linking your account");
+            object.put("debugMessage", ex.getMessage());
+        }
+
+
         return ResponseEntity.status(499).body(object);
 
     }
@@ -167,5 +175,14 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
                  .message("Transaction type not specified")
                  .debugMessage(ex.getMessage()).build());
 
+    }
+    @ExceptionHandler(BankNotFoundException.class)
+    public ResponseEntity<?> handleBankNotFoundException(BankNotFoundException e){
+         return ResponseEntity.status(404).body(
+                 ExceptionRes.builder()
+                         .message("Resource not found")
+                         .debugMessage(e.getMessage())
+                         .code(404).build()
+         );
     }
 }

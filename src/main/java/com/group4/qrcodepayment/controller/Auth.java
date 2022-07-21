@@ -166,10 +166,10 @@ public class Auth {
         String token = jwtUtils.generateToken(userDetails);
         logger.info("Login token is "+ token);
        return  JWTokenDto.builder()
-                               .token(token)
+               .token(token)
                .iat(LocalDateTime.now())
                .exp(LocalDateTime.now().plusSeconds(jwtConfig.getExpire()))
-                .build();
+               .build();
     }
 
 //    Verify otp
@@ -222,14 +222,14 @@ public class Auth {
 
 
     }
-    @GetMapping("/registration/verify/{phone}")
+    @GetMapping("/registration/verify")
     @ApiOperation(
                value="Checks whether a user is registered",
                httpMethod = "GET",
                 notes = "Accepts a phone number is a desired format and returns a OK response if user is found" +
                         " or A 404 if no user matches the passed details"
                             )
-    public ResponseEntity<Object> verifyRegistration(@PathVariable String phone) throws SQLException {
+    public ResponseEntity<Object> verifyRegistration(@RequestParam String phone) throws SQLException {
 
          Boolean user = userRegistrationService.numberRegistered(phone);
          UserInfo userFound = userRegistrationService.findUserByPhone(phone);
@@ -250,13 +250,13 @@ public class Auth {
              return ResponseEntity.status(404).body(res);
 
     }
-    @PostMapping("/otp/send")
+    @GetMapping("/otp/send")
     @ApiOperation(
             value="Sends OTP",
             notes = "Send an OTP to a specified number"
 
                 )
-    public void sendOtp (@RequestBody @Valid RegistrationVerification phone){
+    public void sendOtp (@RequestParam @Valid RegistrationVerification phone){
 
         loginRegistrationEventPublisher.authPublisher(phone.getPhone());
 

@@ -1,5 +1,6 @@
 package com.group4.qrcodepayment.events.event;
 
+import com.group4.qrcodepayment.externals.coop.dto.response.TransferResponse;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.context.ApplicationEvent;
@@ -7,9 +8,7 @@ import org.springframework.context.ApplicationEvent;
 @Setter
 
 public class TransactionRecordedEvent extends ApplicationEvent {
-    private String accountNumber;
-    private String transactionRef;
-    private String bankCode;
+    private TransferResponse transferResponse;
     public TransactionRecordedEvent(Object source) {
         super(source);
     }

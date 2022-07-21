@@ -20,10 +20,10 @@ public class QPayAccountImpl implements QPayAccountService {
     }
     @Override
     @Transactional
-    public void updateAccount(QPayAccount qPayAccount) {
+    public void updateAccount(Integer amount, UserInfo user) {
 
 
-        qPayAccountRepo.save(qPayAccount);
+        qPayAccountRepo.updateBalance(amount, user);
 
 
 

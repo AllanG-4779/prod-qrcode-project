@@ -41,7 +41,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
        http.cors().and().csrf().disable()
                .authorizeRequests()
-               .antMatchers(URLs.HOME).authenticated()
+               .antMatchers(URLs.MPESA_FUND_ACCOUNT,URLs.TRANSFER, URLs.ACCOUNT_LINK).hasRole("USER")
+               .antMatchers(URLs.HOME, URLs.MPESA_TOKEN, URLs.MPESA_REGISTER).hasAnyRole("USER","ADMIN")
+
                .antMatchers(URLs.LOGIN,URLs.REGISTER,URLs.SEND_OTP,
                 URLs.ASSERT_REGISTRATION, URLs.VALIDATE_OTP, "/externals/coop/transfer/result").permitAll()
                .and()

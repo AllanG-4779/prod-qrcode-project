@@ -4,17 +4,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.config.UrlConfig;
-import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
+import com.group4.qrcodepayment.dto.TransactionDto;
+import com.group4.qrcodepayment.exception.resterrors.BankLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.CopBankTransactionException;
+import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.externals.coop.dto.DestinationDto;
 import com.group4.qrcodepayment.externals.coop.dto.PaymentDetailsFromUser;
 import com.group4.qrcodepayment.externals.coop.dto.SourceDto;
 import com.group4.qrcodepayment.externals.coop.dto.TransferDto;
-import com.group4.qrcodepayment.models.Account;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
+import com.group4.qrcodepayment.service.TransactionServiceImpl;
 import com.group4.qrcodepayment.util.RandomGenerator;
 import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.rest.api.v2010.account.call.Payment;
 import com.twilio.type.PhoneNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.constraints.Null;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Objects;
 
 @Service
@@ -41,6 +42,8 @@ public class TransactionService {
     @Autowired
     private UrlConfig urlConfig;
     @Autowired
+    TransactionServiceImpl recordTransactionService;
+    @Autowired
     private TwilioConfig twilioConfig;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -48,7 +51,9 @@ public class TransactionService {
 
 
 
-  public ResponseEntity<?> fundAccount(PaymentDetailsFromUser detailsFromUser) throws JsonProcessingException, BankNotLinkedException, CopBankTransactionException {
+  public ResponseEntity<?> fundAccount(PaymentDetailsFromUser detailsFromUser)
+          throws JsonProcessingException, BankLinkedException,
+          CopBankTransactionException, TransactionNotFoundException {
 //      who is logged in
       String phoneNumber = null;
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,23 +64,24 @@ public class TransactionService {
       SourceDto sourceDto = SourceDto.builder()
               .AccountNumber(accountService.getUserAccountNumber())
               .Amount(detailsFromUser.getAmount())
-              .Narration(detailsFromUser.getNarration())
+              .Narration("FUNDING QPAY ACCOUNT")
               .TransactionCurrency("KES")
               .build();
-//      build the source
+//      build the destination
+
+     String  TransferReference = new RandomGenerator().generateRandom();
       DestinationDto destinationDto = DestinationDto.builder()
               .AccountNumber("54321987654321")
-
               .BankCode("11")
               .Amount(detailsFromUser.getAmount())
               .TransactionCurrency("KES")
-              .Narration(detailsFromUser.getNarration())
-              .ReferenceNumber(new RandomGenerator().generateRandom())
+              .Narration("QPAY FUNDING")
+              .ReferenceNumber(TransferReference+"_B")
               .build();
 //      Build the final request Body
       TransferDto transferDto = TransferDto.builder()
               .CallBackUrl(urlConfig.getBaseUrl() + "/externals/coop/transfer/result")
-              .MessageReference(new RandomGenerator().generateRandom())
+              .MessageReference(TransferReference)
               .Source(sourceDto)
               .Destinations(
                       new DestinationDto[]{
@@ -98,7 +104,7 @@ public class TransactionService {
       logger.error("This is the request to fund " + requestBody);
 
 //      push the request
-      ResponseEntity<?> response  = null;
+      ResponseEntity<?> response;
 try{
       response = restTemplate.postForEntity(
               "https://openapi-sandbox.co-opbank.co.ke/FundsTransfer/External/A2A/PesaLink/1.0.0",
@@ -117,7 +123,7 @@ try{
           throw new CopBankTransactionException(e.getMessage());
 
       }
-      assert response != null;
+
       if(Objects.requireNonNull(response.getBody()).toString().contains("REQUEST ACCEPTED FOR PROCESSING")){
           Message.creator(
                   new PhoneNumber("+254"+phoneNumber),
@@ -125,8 +131,21 @@ try{
                   "Dear QPay user, You have initiated a transaction to fund your Account from your " +
                           "Coperative Bank Account.\n" +
                           "Please await Confirmation from your Bank.\n" +
-                          "Thank you!!"
+                          "Transaction Ref: "+TransferReference+"."
           ).create();
+//          save the transaction
+          TransactionDto transactionDto = TransactionDto
+                  .builder()
+
+                  .sourceAccount(sourceDto.getAccountNumber())
+                  .destinationAccount(destinationDto.getAccountNumber())
+                  .transactionRef(TransferReference)
+                  .transactionAmount(sourceDto.getAmount())
+                  .transactionType("D")
+                  .date(LocalDateTime.now())
+                  .build();
+          recordTransactionService.addTransaction(transactionDto);
+
       }
 
     return response;

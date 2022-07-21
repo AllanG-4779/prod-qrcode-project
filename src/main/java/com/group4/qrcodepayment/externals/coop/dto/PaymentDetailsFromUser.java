@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PaymentDetailsFromUser {
     private String amount;
-    private String narration;
+
 
 }

@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BankNotLinkedException extends  Exception{
+public class BankLinkedException extends  Exception{
     private final String debugMessage;
-    public BankNotLinkedException(String message, String debugMessage){
+    public BankLinkedException(String message, String debugMessage){
         super(message);
         this.debugMessage = debugMessage;
 

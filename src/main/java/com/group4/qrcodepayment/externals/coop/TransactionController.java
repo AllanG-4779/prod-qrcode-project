@@ -1,10 +1,9 @@
 package com.group4.qrcodepayment.externals.coop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.dto.TransactionDto;
 import com.group4.qrcodepayment.events.publisher.TransactionRecordPublisher;
-import com.group4.qrcodepayment.exception.resterrors.BankNotLinkedException;
+import com.group4.qrcodepayment.exception.resterrors.BankLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.CopBankTransactionException;
 import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.externals.coop.dto.PaymentDetailsFromUser;
@@ -34,23 +33,15 @@ public class TransactionController {
     private TransactionService transactionService;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @PostMapping("/transfer/result")
-    public void getResultTransfer(@RequestBody TransferResponse body ) throws TransactionNotFoundException {
-        TransactionDto transactionDto = TransactionDto.builder()
-                .transactionType("D")
-                .date(LocalDateTime.now())
-                .transactionAmount(body.getSource().getAmount())
-                .transactionRef(body.getMessageReference())
-                .destinationAccount("QPAY account")
-                .sourceAccount(body.getSource().AccountNumber)
-                .build();
-        allTransactionService.addTransaction(transactionDto);
+    public void getResultTransfer(@RequestBody TransferResponse body ) {
+
+
 //        publish the event to send a message and update the user's QPaY account
-        recordPublisher.publishTransactionRecordedEvent(transactionDto.getSourceAccount(),
-                transactionDto.getTransactionRef(),"11");
+        recordPublisher.publishTransactionRecordedEvent(body);
     }
     @PostMapping("/transfer")
     public ResponseEntity<?> sendAmountToAccount(@RequestBody PaymentDetailsFromUser detailsFromUser)
-            throws JsonProcessingException, BankNotLinkedException, CopBankTransactionException {
+            throws JsonProcessingException, BankLinkedException, CopBankTransactionException, TransactionNotFoundException {
     return transactionService.fundAccount(detailsFromUser);
 //         return new CopBankConfiguration().getToken();
 

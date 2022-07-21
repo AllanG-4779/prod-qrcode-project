@@ -13,7 +13,7 @@ public interface QPayAccountService {
 //    add account when user registers
     void addNewAccount(QPayAccount account);
 
-    void updateAccount(QPayAccount accountDto);
+    void updateAccount(Integer amount, UserInfo user);
 
     QPayAccount getQPayAccount(UserInfo userId);
 

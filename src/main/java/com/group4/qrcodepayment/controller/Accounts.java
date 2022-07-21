@@ -11,6 +11,7 @@ import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;
 import com.group4.qrcodepayment.models.Bank;
+import com.group4.qrcodepayment.models.QPayAccount;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
 import com.group4.qrcodepayment.service.BankServiceImpl;
@@ -27,6 +28,8 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/acc")
@@ -37,6 +40,7 @@ public class Accounts {
     private UserRepoInt userRepoInt;
     @Autowired
     private BankServiceImpl bankService;
+
     @Autowired
     private AccountServiceImpl accountService;
     @Autowired
@@ -47,11 +51,7 @@ public class Accounts {
         return accountService.linkAccount(accountLink);
 
     }
-    @PostMapping("/add")
-    public Bank addBank(@RequestBody @Valid BankDto bank){
 
-        return bankService.addNewBank(bank);
-    }
 
     @GetMapping("/myqr-code")
     public byte[] generateMyQr(@RequestParam int width, @RequestParam int  height) throws IOException, WriterException, AuthenticationNotFoundException {
@@ -74,5 +74,6 @@ public class Accounts {
        return QRCodeGenerator.getQRcodeImage(hash, width, height);
 
     }
+
 
 }

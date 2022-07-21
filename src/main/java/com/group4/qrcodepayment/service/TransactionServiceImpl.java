@@ -66,4 +66,9 @@ public class TransactionServiceImpl implements Transactionservice {
        Optional<Transactions> transaction =  transactionRepo.findById(id);
         return transaction.orElse(null);
     }
+
+    @Override
+    public void completeTransaction(Transactions transaction) {
+        transactionRepo.save(transaction);
+    }
 }
