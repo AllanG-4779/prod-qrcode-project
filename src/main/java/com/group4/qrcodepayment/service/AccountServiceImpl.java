@@ -90,7 +90,7 @@ public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws Unsup
         try{
             accountRepo.save(account);
         }catch(Exception e){
-            throw new AccountLinkFailedException(e.getLocalizedMessage());
+            throw new AccountLinkFailedException("The "+bank.getName()+" account number you submitted is already linked to an account");
         }
         return accountLink;
 

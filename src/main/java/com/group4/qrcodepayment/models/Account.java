@@ -13,7 +13,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table( uniqueConstraints = @UniqueConstraint(name="accountOwner", columnNames = {"userId", "bankId"}))
+@Table( uniqueConstraints = {@UniqueConstraint(name="accountUniqueOwner", columnNames = {"userId", "bankId"}),
+        @UniqueConstraint(name = "uniqueBank", columnNames = {"accountNumber", "bankId"})})
 public class Account  {
     @Id
     private String accountId;

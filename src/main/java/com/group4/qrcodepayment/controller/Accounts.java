@@ -16,6 +16,8 @@ import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
 import com.group4.qrcodepayment.service.BankServiceImpl;
 import com.group4.qrcodepayment.util.QRCodeGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,21 +34,21 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/acc")
 public class Accounts {
-    @Autowired
-    private BankRepo repo;
-    @Autowired
-    private UserRepoInt userRepoInt;
-    @Autowired
-    private BankServiceImpl bankService;
 
-    @Autowired
+    private BankRepo repo;
+
+    private UserRepoInt userRepoInt;
+    private BankServiceImpl bankService;
     private AccountServiceImpl accountService;
-    @Autowired
+
     private QRCodeGenerator qrCodeGenerator;
     @PostMapping("/link")
-    public AccountLinkingDto linkAccount(@RequestBody @Valid AccountLinkingDto accountLink) throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
+    public AccountLinkingDto linkAccount(@RequestBody @Valid AccountLinkingDto accountLink)
+            throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
+
 
         return accountService.linkAccount(accountLink);
 
@@ -72,6 +74,7 @@ public class Accounts {
         String hash = textEncryptor.encrypt(message);
 
        return QRCodeGenerator.getQRcodeImage(hash, width, height);
+
 
     }
 

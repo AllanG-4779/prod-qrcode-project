@@ -125,7 +125,7 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
 @ExceptionHandler(AccountLinkFailedException.class)
     public ResponseEntity<?> handleAccountLinkException(AccountLinkFailedException ex){
         Map<String, Object> object = new LinkedHashMap<>();
-        object.put("code", 500);
+        object.put("code", 409);
         if(ex.getMessage().contains("constraint [accountOwner]")){
             object.put("message", "Account is already linked");
             object.put("debugMessage","Duplicate entry for the same bank and owner");
@@ -136,7 +136,7 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
         }
 
 
-        return ResponseEntity.status(499).body(object);
+        return ResponseEntity.status(409).body(object);
 
     }
     @ExceptionHandler(CopBankTransactionException.class)
