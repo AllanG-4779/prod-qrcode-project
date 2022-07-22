@@ -54,8 +54,8 @@ public class TransactionRecordEventHandler {
 //        update the transaction as completed
         Transactions  currentTransaction = transactionService
                 .getTransactionById(transferResponse.messageReference);
-        currentTransaction.setCompleted(true);
-        transactionService.completeTransaction(currentTransaction);
+
+        transactionService.completeTransaction(currentTransaction.getTransactionRef(),"Completed" );
 //        Now Send the SMS
         Message.creator(
                 new PhoneNumber("+254"+userInfo.getPhone()),

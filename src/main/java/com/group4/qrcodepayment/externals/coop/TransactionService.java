@@ -12,8 +12,10 @@ import com.group4.qrcodepayment.externals.coop.dto.DestinationDto;
 import com.group4.qrcodepayment.externals.coop.dto.PaymentDetailsFromUser;
 import com.group4.qrcodepayment.externals.coop.dto.SourceDto;
 import com.group4.qrcodepayment.externals.coop.dto.TransferDto;
+import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
 import com.group4.qrcodepayment.service.TransactionServiceImpl;
+import com.group4.qrcodepayment.service.UserRegistrationImpl;
 import com.group4.qrcodepayment.util.RandomGenerator;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -44,6 +46,8 @@ public class TransactionService {
     @Autowired
     TransactionServiceImpl recordTransactionService;
     @Autowired
+    UserRegistrationImpl userRegistration;
+    @Autowired
     private TwilioConfig twilioConfig;
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -55,10 +59,10 @@ public class TransactionService {
           throws JsonProcessingException, BankLinkedException,
           CopBankTransactionException, TransactionNotFoundException {
 //      who is logged in
-      String phoneNumber = null;
+      UserInfo user = null;
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       if (!(authentication == null || authentication instanceof AnonymousAuthenticationToken)) {
-          phoneNumber = authentication.getName();
+          user = userRegistration.findUserByPhone(authentication.getName());
       }
 //      Build the source of funds
       SourceDto sourceDto = SourceDto.builder()
@@ -113,8 +117,9 @@ try{
 
 
   }catch(Exception e){
-          Message.creator(
-                  new PhoneNumber("+254"+phoneNumber),
+    assert user != null;
+    Message.creator(
+                  new PhoneNumber("+254"+user.getPhone()),
                   new PhoneNumber(twilioConfig.getTrialNumber()),
                   "\nDear QPay user, We are sorry to let you know that your request to fund your QPay account was not successful.\n" +
                           "Please try again in a little bit or contact us if this issue persist\n" +
@@ -125,8 +130,9 @@ try{
       }
 
       if(Objects.requireNonNull(response.getBody()).toString().contains("REQUEST ACCEPTED FOR PROCESSING")){
+          assert user != null;
           Message.creator(
-                  new PhoneNumber("+254"+phoneNumber),
+                  new PhoneNumber("+254"+user.getPhone()),
                   new PhoneNumber(twilioConfig.getTrialNumber()),
                   "Dear QPay user, You have initiated a transaction to fund your Account from your " +
                           "Coperative Bank Account.\n" +
@@ -136,13 +142,13 @@ try{
 //          save the transaction
           TransactionDto transactionDto = TransactionDto
                   .builder()
-
                   .sourceAccount(sourceDto.getAccountNumber())
                   .destinationAccount(destinationDto.getAccountNumber())
                   .transactionRef(TransferReference)
                   .transactionAmount(sourceDto.getAmount())
                   .transactionType("D")
                   .date(LocalDateTime.now())
+                  .userId(user)
                   .build();
           recordTransactionService.addTransaction(transactionDto);
 

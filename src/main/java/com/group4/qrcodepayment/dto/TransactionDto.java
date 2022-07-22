@@ -1,5 +1,6 @@
 package com.group4.qrcodepayment.dto;
 
+import com.group4.qrcodepayment.models.UserInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +19,6 @@ public class TransactionDto {
     private String destinationAccount;
     private LocalDateTime date;
     private String transactionType;
+    private String status;
+    private UserInfo userId;
 }

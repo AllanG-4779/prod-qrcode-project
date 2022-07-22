@@ -24,10 +24,13 @@ public class Transactions {
     private String destinationAccount;
     @Column(nullable = false)
     private String amount;
-    private boolean completed=false;
+    private String status="Pending";
     @ManyToOne
     @JoinColumn(name="transaction_type", referencedColumnName = "transactionId", nullable = false)
     private TransactionType transactionType;
+    @OneToOne
+    @JoinColumn(name="transacting_object" , referencedColumnName = "userId",nullable = false)
+    private UserInfo userId;
 
     private LocalDateTime dateTime;
 

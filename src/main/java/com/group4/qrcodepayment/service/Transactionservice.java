@@ -12,6 +12,6 @@ public interface Transactionservice {
     void addTransaction(TransactionDto transactionDto) throws TransactionNotFoundException;
     Transactions getTransactionById(String id);
 
-    void completeTransaction(Transactions transaction);
+    void completeTransaction(String id, String status);
 
 }

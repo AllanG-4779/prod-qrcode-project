@@ -185,4 +185,13 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
                          .code(404).build()
          );
     }
+@ExceptionHandler(TransactionFailedException.class)
+   public ResponseEntity<?> handleTransactionFailedException(TransactionFailedException e){
+         ExceptionRes res = ExceptionRes.builder()
+                 .code(500)
+                 .message(e.getMessage())
+                 .debugMessage(e.getLocalizedMessage())
+                  .build();
+         return ResponseEntity.status(500).body(res);
+   }
 }

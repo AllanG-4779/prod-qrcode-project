@@ -2,29 +2,56 @@ package com.group4.qrcodepayment.externals.mpesa;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group4.qrcodepayment.config.UrlConfig;
+import com.group4.qrcodepayment.dto.TransactionDto;
+import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
+import com.group4.qrcodepayment.exception.resterrors.TransactionFailedException;
+import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.externals.mpesa.dto.MpesaFundAccount;
 import com.group4.qrcodepayment.externals.mpesa.dto.MpesaToken;
 import com.group4.qrcodepayment.externals.mpesa.dto.RegisterUrlReqBody;
+import com.group4.qrcodepayment.models.UserInfo;
+import com.group4.qrcodepayment.security.CustomUserDetails;
+import com.group4.qrcodepayment.security.CustomUserDetailsService;
+import com.group4.qrcodepayment.service.TransactionServiceImpl;
+import com.group4.qrcodepayment.service.UserRegistrationImpl;
+import com.group4.qrcodepayment.util.RandomGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.*;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Base64;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.*;
 
 
 @Configuration
 @Data
+
 @ConfigurationProperties(prefix = "mpesa")
 public class Config {
     private String consumerKey;
     private String consumerSecret;
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+    @Autowired
+    private UrlConfig  baseUrl;
+    @Autowired
+    private TransactionServiceImpl transactionService;
+    @Autowired
+    private UserRegistrationImpl userRegistration;
+
 
 //    get the token
 
@@ -80,8 +107,13 @@ public class Config {
     }
 
 //    invoke an STK push
-    public Object fundAccountViaMpesa() throws JsonProcessingException {
-
+    public Object fundAccountViaMpesa(String amount) throws JsonProcessingException, AuthenticationNotFoundException, TransactionNotFoundException {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(!auth.isAuthenticated() || (auth instanceof AnonymousAuthenticationToken)){
+            throw new AuthenticationNotFoundException("To use MPESA please sign in first");
+        }
+        UserDetails user = userDetailsService.loadUserByUsername(auth.getName());
+        UserInfo transactingObject = userRegistration.findUserByPhone(user.getUsername());
 //        Date date = new Date();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss");
 
@@ -94,9 +126,9 @@ public class Config {
                 .builder()
                 .BusinessShortCode("174379")
                 .Password(password)
-                .Amount("1")
-                .CallBackURL("https://marabal.herokuapp.com/v1/confirmation")
-                .PartyA("254796407365")
+                .Amount(amount)
+                .CallBackURL(baseUrl.getBaseUrl()+"/v1/confirmation")
+                .PartyA("254"+user.getUsername())
                 .PartyB("174379")
                 .PhoneNumber("254796407365")
                 .Timestamp(timeStamp)
@@ -113,9 +145,27 @@ public class Config {
 //        Actual request
 
         RestTemplate template = new RestTemplate();
-       ResponseEntity<?> res =  template.postForEntity("https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest", httpRequest, Object.class);
 
-        return  res.getBody();
+
+            ResponseEntity<?> res =  template.postForEntity("https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest", httpRequest, LinkedHashMap.class);
+            TransactionDto transactionDto = TransactionDto
+                    .builder()
+                    .date(LocalDateTime.now())
+
+                    .transactionType("D")
+                    .transactionAmount(fundAccountBody.getAmount())
+                    .transactionRef(((LinkedHashMap<?,?>) res.getBody()).get("CheckoutRequestID").toString())
+                    .destinationAccount("QPay ACCOUNT")
+                    .sourceAccount("MPESA ACCOUNT")
+                    .status("Pending")
+                    .userId(transactingObject)
+                    .build();
+
+            transactionService.addTransaction(transactionDto);
+
+            return  res.getBody();
+
+
 
 
     }

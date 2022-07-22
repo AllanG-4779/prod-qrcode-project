@@ -28,7 +28,8 @@ public class TransactionServiceImpl implements Transactionservice {
     @Override
     public void addTransaction(TransactionDto transactionDto) throws TransactionNotFoundException {
 //         get the transaction type
-        Optional<TransactionType> transactionType = transactionTypes.findById("D");
+        Optional<TransactionType> transactionType = transactionTypes
+                .findById(transactionDto.getTransactionType());
 //        Given the user's account number and the bank ID can you fetch the user's account
 //        Bank bank = bankRepo.findBankByipslCode("11");
 //        UserInfo user = userRegistration
@@ -45,6 +46,8 @@ public class TransactionServiceImpl implements Transactionservice {
                 .transactionType(transactionType.get())
                 .destinationAccount(transactionDto.getDestinationAccount())
                 .sourceAccount(transactionDto.getSourceAccount())
+                .status(transactionDto.getStatus())
+                .userId(transactionDto.getUserId())
                 .build();
 
 //        Now build the QPayDto-> Responsible for updating the QPay account
@@ -68,7 +71,7 @@ public class TransactionServiceImpl implements Transactionservice {
     }
 
     @Override
-    public void completeTransaction(Transactions transaction) {
-        transactionRepo.save(transaction);
+    public void completeTransaction(String id, String status) {
+        transactionRepo.updateTransaction(id, status);
     }
 }

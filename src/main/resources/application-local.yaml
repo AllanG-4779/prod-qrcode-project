@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
 baseurl:
-  base-url: https://3141-105-161-107-79.ngrok.io
+  base-url: https://1213-105-160-75-130.ngrok.io
 
 
 

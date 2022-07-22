@@ -45,14 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .antMatchers(URLs.HOME, URLs.MPESA_TOKEN, URLs.MPESA_REGISTER).hasAnyRole("USER","ADMIN")
 
                .antMatchers(URLs.LOGIN,URLs.REGISTER,URLs.SEND_OTP,
-                URLs.ASSERT_REGISTRATION, URLs.VALIDATE_OTP, "/externals/coop/transfer/result").permitAll()
-               .and()
-
-//Tell the security that you don't want to use session based
-
-               .sessionManagement()
-               .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+                URLs.ASSERT_REGISTRATION, URLs.VALIDATE_OTP, "/externals/coop/transfer/result", URLs.MPESA_CONFIRMATION,
+       URLs.MPESA_VALIDATION).permitAll();
        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 //                                       .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);

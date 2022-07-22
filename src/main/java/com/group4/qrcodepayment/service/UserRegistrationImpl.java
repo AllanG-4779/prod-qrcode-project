@@ -83,10 +83,9 @@ public class UserRegistrationImpl implements UserRegistrationService{
     @Override
     public UserInfo findUserByPhone(String phone) {
         try{
-
-            return userRepo.findByUsername(phone);
+        return userRepo.findByUsername(phone);
         }catch (Exception e){
-            throw new RuntimeException("User identity could not be established");
+            throw new RuntimeException(e.getLocalizedMessage());
         }
     }
 
