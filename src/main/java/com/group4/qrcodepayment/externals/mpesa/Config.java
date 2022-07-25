@@ -43,6 +43,7 @@ import java.util.*;
 public class Config {
     private String consumerKey;
     private String consumerSecret;
+    private String passKey;
     @Autowired
     private CustomUserDetailsService userDetailsService;
     @Autowired
@@ -119,7 +120,7 @@ public class Config {
 
         Date myDate = new Date();
         String timeStamp = format.format(myDate);
-        String passStr = "174379"+"bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"+timeStamp;
+        String passStr = "174379"+passKey+timeStamp;
 
         String password = Base64.getEncoder().encodeToString(passStr.getBytes());
         MpesaFundAccount fundAccountBody = MpesaFundAccount
@@ -154,7 +155,7 @@ public class Config {
 
                     .transactionType("D")
                     .transactionAmount(fundAccountBody.getAmount())
-                    .transactionRef(((LinkedHashMap<?,?>) res.getBody()).get("CheckoutRequestID").toString())
+                    .transactionRef(((LinkedHashMap<?,?>) Objects.requireNonNull(res.getBody())).get("CheckoutRequestID").toString())
                     .destinationAccount("QPay ACCOUNT")
                     .sourceAccount("MPESA ACCOUNT")
                     .status("Pending")

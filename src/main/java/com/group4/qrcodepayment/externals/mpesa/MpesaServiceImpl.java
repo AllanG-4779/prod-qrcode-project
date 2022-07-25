@@ -2,7 +2,6 @@ package com.group4.qrcodepayment.externals.mpesa;
 
 import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.externals.mpesa.dto.TransactionMetadata;
-import com.group4.qrcodepayment.models.QPayAccount;
 import com.group4.qrcodepayment.models.Transactions;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.service.QPayAccountImpl;
@@ -12,8 +11,6 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import javax.swing.event.TreeWillExpandListener;
 
 @Service
 public class MpesaServiceImpl implements MpesaService{
