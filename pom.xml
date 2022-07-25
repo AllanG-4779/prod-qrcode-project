@@ -30,11 +30,13 @@
             <version>3.5.0</version>
             <type>pom</type>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.github.czy1024/json-exception -->
         <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20220320</version>
+            <groupId>com.github.czy1024</groupId>
+            <artifactId>json-exception</artifactId>
+            <version>1.0.3-RELEASE</version>
         </dependency>
+
         <dependency>
             <groupId>com.google.zxing</groupId>
             <artifactId>javase</artifactId>
