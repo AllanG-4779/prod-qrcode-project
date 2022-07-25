@@ -6,5 +6,5 @@ import lombok.Data;
 public class TransactionMetadata {
     private Integer amount;
     private String receipt;
-    private Long phoneNumber;
+    private String phoneNumber;
 }

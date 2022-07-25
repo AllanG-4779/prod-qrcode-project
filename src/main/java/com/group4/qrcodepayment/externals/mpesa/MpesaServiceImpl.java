@@ -32,12 +32,12 @@ public class MpesaServiceImpl implements MpesaService{
     @Override
     public void updateUser(TransactionMetadata transactionMetadata) {
 
-        String phone = transactionMetadata.getPhoneNumber().toString().substring(3);
+        String phone = transactionMetadata.getPhoneNumber();
         UserInfo user = userRegistration.findUserByPhone(phone);
         assert user!=null;
 
         Message.creator(
-                new PhoneNumber("+"+transactionMetadata.getPhoneNumber().toString()),
+                new PhoneNumber("+254"+transactionMetadata.getPhoneNumber()),
                 new PhoneNumber(twilioConfig.getTrialNumber()),
                 "Dear Customer, KES"+transactionMetadata.getAmount()+" transfered" +
                         "from your Mpesa account to QPay account. New account balance is" +

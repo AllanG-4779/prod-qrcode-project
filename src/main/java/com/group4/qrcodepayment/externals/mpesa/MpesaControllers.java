@@ -77,16 +77,17 @@ public class MpesaControllers {
             JSONArray jsonArray =(JSONArray) medaData.get("Item");
             JSONObject amount =  jsonArray.getJSONObject(0);
             JSONObject receipt = jsonArray.getJSONObject(1);
-            String phone = userRegistration.findUserByPhone(
-                    SecurityContextHolder.getContext().getAuthentication().getName()).getPhone();
+//            obtain the phone number of the logged-in user
+            String phone =
+                    SecurityContextHolder.getContext().getAuthentication().getName();
 
             TransactionMetadata transactionMetadata = new TransactionMetadata();
             transactionMetadata.setAmount(amount.getInt("Value"));
             transactionMetadata.setReceipt(receipt.getString("Value"));
-            transactionMetadata.setPhoneNumber(Long.valueOf(phone));
+            transactionMetadata.setPhoneNumber(phone);
             System.out.println(transactionMetadata);
 //            get the account owner
-            String phoneNumber = transactionMetadata.getPhoneNumber().toString().substring(3);
+            String phoneNumber = transactionMetadata.getPhoneNumber();
             UserInfo userToCredit = userRegistration.findUserByPhone(phoneNumber);
             qpayService.updateAccount(transactionMetadata.getAmount(),userToCredit);
 
