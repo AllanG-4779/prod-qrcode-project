@@ -75,7 +75,7 @@ public class MpesaControllers {
             JSONArray jsonArray =(JSONArray) medaData.get("Item");
             JSONObject amount =  jsonArray.getJSONObject(0);
             JSONObject receipt = jsonArray.getJSONObject(1);
-            JSONObject phone = jsonArray.getJSONObject(5);
+            JSONObject phone = jsonArray.getJSONObject(4);
 
             TransactionMetadata transactionMetadata = new TransactionMetadata();
             transactionMetadata.setAmount(amount.getInt("Value"));
