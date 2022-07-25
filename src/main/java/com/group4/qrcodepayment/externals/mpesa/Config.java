@@ -131,9 +131,9 @@ public class Config {
                 .CallBackURL(baseUrl.getBaseUrl()+"/v1/confirmation")
                 .PartyA("254"+user.getUsername())
                 .PartyB("174379")
-                .PhoneNumber("254796407365")
+                .PhoneNumber("254"+user.getUsername())
                 .Timestamp(timeStamp)
-                .AccountReference("TMS80383TX12")
+                .AccountReference("QPAY-"+user.getUsername())
                 .TransactionDesc("Paying QPay")
                 .TransactionType("CustomerPayBillOnline")
                 .build();
