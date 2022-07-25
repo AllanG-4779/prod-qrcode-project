@@ -18,15 +18,23 @@ import com.group4.qrcodepayment.service.BankServiceImpl;
 import com.group4.qrcodepayment.util.QRCodeGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.apache.http.util.ByteArrayBuffer;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.LinkedHashMap;
@@ -36,6 +44,7 @@ import java.util.Map;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/acc")
+@CrossOrigin(origins = "*")
 public class Accounts {
 
     private BankRepo repo;
@@ -56,7 +65,7 @@ public class Accounts {
 
 
     @GetMapping("/myqr-code")
-    public byte[] generateMyQr(@RequestParam int width, @RequestParam int  height) throws IOException, WriterException, AuthenticationNotFoundException {
+    public byte[] generateMyQr(@RequestParam int width, @RequestParam int  height) throws IOException, WriterException, AuthenticationNotFoundException, JSONException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
         throw new AuthenticationNotFoundException("Seems you are not authenticated, please login ");
@@ -73,9 +82,15 @@ public class Accounts {
         String message = "user_id="+user.getUserId()+"phone="+user.getPhone();
         String hash = textEncryptor.encrypt(message);
 
-       return QRCodeGenerator.getQRcodeImage(hash, width, height);
+
+          return     QRCodeGenerator.getQRcodeImage(hash,width,height);
 
 
+
+    }
+    @Bean
+    public ByteArrayHttpMessageConverter httpMessageConverter(){
+        return new ByteArrayHttpMessageConverter();
     }
 
 

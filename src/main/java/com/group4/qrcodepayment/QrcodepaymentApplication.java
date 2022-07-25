@@ -19,7 +19,7 @@ public class QrcodepaymentApplication {
 //    initialize twilio
     @Autowired
     private TwilioConfig config;
-//    the postconstruct enable the method to run once the application is initialized
+//    the post-construct enable the method to run once the application is initialized
 
     @PostConstruct
     public void initTwilio(){
