@@ -241,7 +241,7 @@ public class Auth {
              user1.put("fullName",userFound.getFirstName()+" "+userFound.getSecondName() );
              res.put("code", 200);
              res.put("message", "Number registered");
-             res.put("email",userFound.getEmail() );
+
              res.put("user",user1 );
              res.put("timestamp", LocalDateTime.now());
              return ResponseEntity.status(200).body(res);
