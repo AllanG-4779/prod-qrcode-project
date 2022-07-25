@@ -31,16 +31,19 @@ public class Banks {
     @PostMapping("/support")
     public ResponseEntity<?> setSupported(@RequestParam @NotBlank @NotNull String name){
        int result =  bankService.supportBank(name);
-       Map<String, String> map = new LinkedHashMap<>();
-       map.put("message", name+ " is now supported");
-       map.put("code", "200");
+      try{
+          Bank bank = bankService.getBankByIpslCode(name);
+          Map<String, String> map = new LinkedHashMap<>();
+          map.put("message", "QPay users can now link their "+ bank.getName() +" account to transact" );
+          map.put("code", "200");
 
-       if (result <= 0){
-           throw new BankNotFoundException("Double check the name of the bank");
-       }else{
-           return ResponseEntity.status(200).body(
+          return ResponseEntity.status(200).body(
                   map
-           );
+          );
+       }
+      catch(NullPointerException ex){
+          throw new BankNotFoundException("Double check the name of the bank");
+
        }
 
     }

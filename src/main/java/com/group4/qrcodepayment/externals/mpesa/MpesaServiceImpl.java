@@ -39,9 +39,9 @@ public class MpesaServiceImpl implements MpesaService{
         Message.creator(
                 new PhoneNumber("+"+transactionMetadata.getPhoneNumber().toString()),
                 new PhoneNumber(twilioConfig.getTrialNumber()),
-                "Dear Customer, KES"+transactionMetadata.getAmount()+" transfered" +
-                        "from your Mpesa account to QPay account. New account balance is" +
-                        "KES"+ qPayAccount.getQPayAccount(user).getBalance()
+                "Dear Customer, KES "+transactionMetadata.getAmount()+" transfered" +
+                        " from your Mpesa account to QPay account. New account balance is " +
+                        "KES "+ qPayAccount.getQPayAccount(user).getBalance()
         ).create();
 
     }
