@@ -21,9 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import org.json.JSONObject;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.spi.service.contexts.SecurityContext;
 
 
 import java.io.DataOutput;
@@ -77,17 +75,15 @@ public class MpesaControllers {
             JSONArray jsonArray =(JSONArray) medaData.get("Item");
             JSONObject amount =  jsonArray.getJSONObject(0);
             JSONObject receipt = jsonArray.getJSONObject(1);
-//            obtain the phone number of the logged-in user
-            String phone =
-                    SecurityContextHolder.getContext().getAuthentication().getName();
+            JSONObject phone = jsonArray.getJSONObject(5);
 
             TransactionMetadata transactionMetadata = new TransactionMetadata();
             transactionMetadata.setAmount(amount.getInt("Value"));
             transactionMetadata.setReceipt(receipt.getString("Value"));
-            transactionMetadata.setPhoneNumber(phone);
+            transactionMetadata.setPhoneNumber(phone.getLong("Value"));
             System.out.println(transactionMetadata);
 //            get the account owner
-            String phoneNumber = transactionMetadata.getPhoneNumber();
+            String phoneNumber = transactionMetadata.getPhoneNumber().toString().substring(3);
             UserInfo userToCredit = userRegistration.findUserByPhone(phoneNumber);
             qpayService.updateAccount(transactionMetadata.getAmount(),userToCredit);
 
