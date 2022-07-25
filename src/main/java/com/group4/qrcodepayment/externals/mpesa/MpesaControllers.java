@@ -21,7 +21,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import org.json.JSONObject;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.spi.service.contexts.SecurityContext;
 
 
 import java.io.DataOutput;
@@ -75,12 +77,13 @@ public class MpesaControllers {
             JSONArray jsonArray =(JSONArray) medaData.get("Item");
             JSONObject amount =  jsonArray.getJSONObject(0);
             JSONObject receipt = jsonArray.getJSONObject(1);
-            JSONObject phone = jsonArray.getJSONObject(3);
+            String phone = userRegistration.findUserByPhone(
+                    SecurityContextHolder.getContext().getAuthentication().getName()).getPhone();
 
             TransactionMetadata transactionMetadata = new TransactionMetadata();
             transactionMetadata.setAmount(amount.getInt("Value"));
             transactionMetadata.setReceipt(receipt.getString("Value"));
-            transactionMetadata.setPhoneNumber(phone.getLong("Value"));
+            transactionMetadata.setPhoneNumber(Long.valueOf(phone));
             System.out.println(transactionMetadata);
 //            get the account owner
             String phoneNumber = transactionMetadata.getPhoneNumber().toString().substring(3);
