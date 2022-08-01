@@ -15,11 +15,13 @@ import com.group4.qrcodepayment.security.CustomUserDetails;
 import com.group4.qrcodepayment.security.JWTUtils;
 import com.group4.qrcodepayment.security.PasswordConfig;
 import com.group4.qrcodepayment.service.OtpServiceImpl;
+import com.group4.qrcodepayment.service.UserRegistrationImpl;
 import com.group4.qrcodepayment.service.UserRegistrationService;
 import com.twilio.exception.ApiException;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import io.swagger.annotations.ApiOperation;
+import org.jasypt.exceptions.PasswordAlreadyCleanedException;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jasypt.util.text.StrongTextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
@@ -53,7 +55,7 @@ public class Auth {
     @Autowired
     private PasswordConfig passwordConfig;
     @Autowired
-    private UserRegistrationService userRegistrationService;
+    private UserRegistrationImpl userRegistrationService;
     @Autowired
     AuthenticationManager authenticationManager;
     @Autowired
@@ -198,7 +200,7 @@ public class Auth {
             map.put("timestamp", LocalDateTime.now());
 //          update the account with account verified token {activated time, phone number, user_id}
             UserInfo user = userRegistrationService.findUserByPhone(code.getPhone());
-            if(user!= null) {
+            if(user.getPassword() != null) {
 //
                 StrongTextEncryptor encryptor = new StrongTextEncryptor();
                 encryptor.setPassword("pass");
@@ -210,6 +212,8 @@ public class Auth {
                 otpService.updateOtp(message, code.getPhone());
 
                map.put("security_token", message);
+            }else{
+                throw new PasswordAlreadyCleanedException();
             }
             return ResponseEntity.status(200).body(map);
 
@@ -286,8 +290,9 @@ public class Auth {
 
         otpService.addOtp(otpDto);
     }
-    @PostMapping("/password/reset")
-    public ResponseEntity<String> resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto) throws RegistrationFailedException {
+    @PutMapping("/password/reset")
+    public ResponseEntity<String> resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto)
+            throws RegistrationFailedException {
 
 //         Verify the token passed
         OneTimeCode otpToken = otpService.getOtpByCode(passwordResetDto.getToken());
@@ -306,9 +311,10 @@ public class Auth {
         UserInfo user = userRegistrationService.findUserByPhone(details[1]);
 
 //        update the user
-        user.setPassword(passwordConfig.passwordEncoder()
-                .encode(passwordResetDto.getPassword()));
-        userRegistrationService.userRegister(user);
+       String newPassword = passwordConfig.passwordEncoder()
+               .encode(passwordResetDto.getPassword());
+
+        userRegistrationService.updatePassword(user.getPhone(),newPassword);
 
 //        delete the token from the db
         otpService.deleteOtp(details[1]);

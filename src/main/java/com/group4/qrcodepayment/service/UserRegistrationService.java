@@ -19,5 +19,6 @@ public interface UserRegistrationService {
 
     UserInfo findUserByPhone(String phone);
 
+    void updatePassword(String phone, String password);
    // UserInfo findUserByAccountAndBank(String accountNumber, String bankId);
 }

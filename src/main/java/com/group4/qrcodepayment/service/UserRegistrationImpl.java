@@ -41,7 +41,7 @@ public class UserRegistrationImpl implements UserRegistrationService{
 
         }
         catch(Exception e){
-           throw new RegistrationFailedException("Registration failed please try again later");
+           throw new RegistrationFailedException(e.getLocalizedMessage());
         }
 
 
@@ -89,7 +89,12 @@ public class UserRegistrationImpl implements UserRegistrationService{
         }
     }
 
-   // @Override
+    @Override
+    public void updatePassword( String phone, String password) {
+        userRepo.updatePassword(phone ,password);
+    }
+
+    // @Override
 //    public UserInfo findUserByAccountAndBank(String accountNumber, Bank bankId) {
 //        return userRepo.findUserByBankIdAndAccountNumber(accountNumber, bankId);
 //    }

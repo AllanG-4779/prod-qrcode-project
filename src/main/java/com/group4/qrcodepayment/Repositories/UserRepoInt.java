@@ -31,4 +31,8 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
    @Transactional
    @Query("UPDATE UserInfo  useraccount SET useraccount.isConfirmed=true WHERE useraccount.phone=?1")
     void verifyAccount(String phone);
+    @Transactional
+    @Modifying
+    @Query("UPDATE UserInfo  user SET user.password=?1 WHERE user.phone=?2")
+    void updatePassword(String phone,String password);
 }
