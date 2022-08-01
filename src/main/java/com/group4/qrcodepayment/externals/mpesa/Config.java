@@ -153,7 +153,7 @@ public class Config {
                     .builder()
                     .date(LocalDateTime.now())
 
-                    .transactionType("D")
+                    .transactionType('D')
                     .transactionAmount(fundAccountBody.getAmount())
                     .transactionRef(((LinkedHashMap<?,?>) Objects.requireNonNull(res.getBody())).get("CheckoutRequestID").toString())
                     .destinationAccount("QPay ACCOUNT")

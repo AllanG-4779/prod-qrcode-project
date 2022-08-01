@@ -4,6 +4,7 @@ import com.group4.qrcodepayment.Repositories.*;
 import com.group4.qrcodepayment.dto.TransactionDto;
 import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.models.*;
+import com.group4.qrcodepayment.models.TransactionType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,8 @@ import java.util.Optional;
 public class TransactionServiceImpl implements Transactionservice {
 //    transaction types database
     @Autowired
-    private TransactionsTypes transactionTypes;
-    @Autowired
-    private UserRegistrationImpl userRegistration;
+    private TransactionTypeRepo transactionTypes;
 
-    @Autowired
-    private QPayAccountService qPayAccountService;
     @Autowired
     private TransactionRepo transactionRepo;
     @Autowired
@@ -29,7 +26,7 @@ public class TransactionServiceImpl implements Transactionservice {
     public void addTransaction(TransactionDto transactionDto) throws TransactionNotFoundException {
 //         get the transaction type
         Optional<TransactionType> transactionType = transactionTypes
-                .findById(transactionDto.getTransactionType());
+                .findByTransactionId(transactionDto.getTransactionType());
 //        Given the user's account number and the bank ID can you fetch the user's account
 //        Bank bank = bankRepo.findBankByipslCode("11");
 //        UserInfo user = userRegistration

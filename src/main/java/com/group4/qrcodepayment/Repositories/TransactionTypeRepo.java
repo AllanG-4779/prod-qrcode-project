@@ -4,6 +4,9 @@ import com.group4.qrcodepayment.models.TransactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
-public interface TransactionsTypes extends JpaRepository<TransactionType, String> {
+public interface TransactionTypeRepo extends JpaRepository<TransactionType, Long> {
+    Optional<TransactionType> findByTransactionId(Character transactionType);
 }

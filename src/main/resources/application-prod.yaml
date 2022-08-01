@@ -1,0 +1,17 @@
+
+
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+
+
+baseurl:
+  base-url: https://marabal.herokuapp.com
+
+
+
+
+
+
+
+

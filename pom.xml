@@ -14,6 +14,28 @@
     <name>qrcodepayment</name>
     <description>qrcodepayment</description>
 
+<!--    Set the profiles here-->
+    <profiles>
+        <profile>
+            <id>local</id>
+            <build>
+               <finalName>${project.artifactId}-local</finalName>
+                <filters>
+                    <filter>src/main/resources/application-local.yaml</filter>
+                </filters>
+            </build>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <build>
+                <finalName>${project.artifactId}-prod</finalName>
+                <filters>
+                    <filter>src/main/resources/application.yaml</filter>
+                </filters>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>

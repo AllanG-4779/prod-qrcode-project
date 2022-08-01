@@ -14,7 +14,10 @@ import javax.persistence.*;
 @Builder
 public class TransactionType {
     @Id
-    private String transactionId;
-    @Column(nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+    @Column(unique = true, nullable = false)
+    private Character transactionId;
+    @Column(nullable = false, unique = true)
     private String transactionName;
 }

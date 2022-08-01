@@ -146,7 +146,7 @@ try{
                   .destinationAccount(destinationDto.getAccountNumber())
                   .transactionRef(TransferReference)
                   .transactionAmount(sourceDto.getAmount())
-                  .transactionType("D")
+                  .transactionType('D')
                   .date(LocalDateTime.now())
                   .userId(user)
                   .build();

@@ -1,10 +1,7 @@
-server:
-
-  port: 8001
 
 spring:
-  datasource:
-    driver-class-name: org.postgresql.Driver
+  config:
+    import: secrets.yaml
 
   mvc:
     pathmatch:
@@ -15,11 +12,6 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-  config:
-    import: optional:secrets.yaml
-baseurl:
-  base-url: https://marabal.herokuapp.com
-
 
 
 

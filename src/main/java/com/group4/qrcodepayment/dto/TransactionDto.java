@@ -18,7 +18,7 @@ public class TransactionDto {
     private String sourceAccount;
     private String destinationAccount;
     private LocalDateTime date;
-    private String transactionType;
+    private Character transactionType;
     private String status;
     private UserInfo userId;
 }
