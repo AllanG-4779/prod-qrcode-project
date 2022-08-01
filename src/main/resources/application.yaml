@@ -12,6 +12,8 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+baseurl:
+  base-url: https://marabal.herokuapp.com
 
 
 
