@@ -44,6 +44,7 @@ public class Config {
     private String consumerKey;
     private String consumerSecret;
     private String passKey;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
     private CustomUserDetailsService userDetailsService;
     @Autowired
@@ -92,10 +93,12 @@ public class Config {
                 .ResponseType("Completed")
                 .ShortCode("174379")
                 .build();
+
+
         ObjectMapper mapper = new ObjectMapper();
         String reqBody = mapper.writeValueAsString(registerUrlReqBody);
         Logger logger = LoggerFactory.getLogger(this.getClass());
-        logger.debug(reqBody);
+        logger.info(reqBody);
 
 
 
@@ -144,7 +147,7 @@ public class Config {
                 .writeValueAsString(fundAccountBody),headers);
 
 //        Actual request
-
+        logger.error(fundAccountBody.toString());
         RestTemplate template = new RestTemplate();
 
 
