@@ -22,9 +22,6 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
 
    Optional<UserInfo> findUserInfoByPhone(String phone);
 
-   @Query("SELECT user FROM UserInfo user INNER JOIN Account acc ON user.userId = acc.userId WHERE acc.accountNumber =?1 AND acc.bankId=?2")
-   UserInfo findUserByBankIdAndAccountNumber(String acc_number, String bankId);
-
 
 
    @Modifying
@@ -33,6 +30,6 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
     void verifyAccount(String phone);
     @Transactional
     @Modifying
-    @Query("UPDATE UserInfo  user SET user.password=?1 WHERE user.phone=?2")
+    @Query("UPDATE UserInfo  user SET user.password=?2 WHERE user.phone=?1")
     void updatePassword(String phone,String password);
 }

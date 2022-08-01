@@ -314,7 +314,7 @@ public class Auth {
        String newPassword = passwordConfig.passwordEncoder()
                .encode(passwordResetDto.getPassword());
 
-        userRegistrationService.updatePassword(user.getPhone(),newPassword);
+        userRegistrationService.updateUserpassword(user.getPhone(),newPassword);
 
 //        delete the token from the db
         otpService.deleteOtp(details[1]);

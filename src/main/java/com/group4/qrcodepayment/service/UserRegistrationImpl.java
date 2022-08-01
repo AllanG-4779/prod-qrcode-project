@@ -90,7 +90,7 @@ public class UserRegistrationImpl implements UserRegistrationService{
     }
 
     @Override
-    public void updatePassword( String phone, String password) {
+    public void updateUserpassword( String phone, String password) {
         userRepo.updatePassword(phone ,password);
     }
 
