@@ -1,9 +1,8 @@
 package com.group4.qrcodepayment.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.group4.qrcodepayment.dto.BankDto;
+import com.group4.qrcodepayment.dto.Bank.BankDto;
 import com.group4.qrcodepayment.dto.SuccessMessage;
-import com.group4.qrcodepayment.dto.TransactionTypeDto;
+import com.group4.qrcodepayment.dto.Accounts.TransactionTypeDto;
 import com.group4.qrcodepayment.exception.resterrors.BankNotFoundException;
 import com.group4.qrcodepayment.models.Bank;
 import com.group4.qrcodepayment.models.TransactionType;
@@ -13,11 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.rmi.ServerError;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;

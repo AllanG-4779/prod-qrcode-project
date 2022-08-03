@@ -43,6 +43,5 @@ public class MpesaServiceImpl implements MpesaService{
                         " from your Mpesa account to QPay account. New account balance is " +
                         "KES "+ qPayAccount.getQPayAccount(user).getBalance()
         ).create();
-
     }
 }

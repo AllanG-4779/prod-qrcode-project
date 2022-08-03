@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.config.UrlConfig;
-import com.group4.qrcodepayment.dto.TransactionDto;
+import com.group4.qrcodepayment.dto.Accounts.TransactionDto;
 import com.group4.qrcodepayment.exception.resterrors.BankLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.CopBankTransactionException;
 import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
@@ -31,7 +31,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Locale;
 import java.util.Objects;
 
 @Service

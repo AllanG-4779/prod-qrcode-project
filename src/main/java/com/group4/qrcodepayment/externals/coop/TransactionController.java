@@ -1,7 +1,6 @@
 package com.group4.qrcodepayment.externals.coop;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.group4.qrcodepayment.dto.TransactionDto;
 import com.group4.qrcodepayment.events.publisher.TransactionRecordPublisher;
 import com.group4.qrcodepayment.exception.resterrors.BankLinkedException;
 import com.group4.qrcodepayment.exception.resterrors.CopBankTransactionException;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/externals/coop")

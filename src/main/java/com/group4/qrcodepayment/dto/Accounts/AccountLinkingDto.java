@@ -1,4 +1,4 @@
-package com.group4.qrcodepayment.dto;
+package com.group4.qrcodepayment.dto.Accounts;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

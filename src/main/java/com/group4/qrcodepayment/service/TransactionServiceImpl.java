@@ -1,7 +1,7 @@
 package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.Repositories.*;
-import com.group4.qrcodepayment.dto.TransactionDto;
+import com.group4.qrcodepayment.dto.Accounts.TransactionDto;
 import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.models.*;
 import com.group4.qrcodepayment.models.TransactionType;

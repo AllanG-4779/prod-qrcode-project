@@ -1,7 +1,7 @@
 package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.Repositories.BankRepo;
-import com.group4.qrcodepayment.dto.BankDto;
+import com.group4.qrcodepayment.dto.Bank.BankDto;
 import com.group4.qrcodepayment.exception.resterrors.BankNotFoundException;
 import com.group4.qrcodepayment.models.Bank;
 import org.springframework.beans.factory.annotation.Autowired;

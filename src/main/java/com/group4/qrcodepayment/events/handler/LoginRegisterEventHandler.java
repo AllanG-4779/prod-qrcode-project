@@ -1,7 +1,7 @@
 package com.group4.qrcodepayment.events.handler;
 
 import com.group4.qrcodepayment.config.TwilioConfig;
-import com.group4.qrcodepayment.dto.OtpDto;
+import com.group4.qrcodepayment.dto.Auth.OtpDto;
 import com.group4.qrcodepayment.events.event.LoginRegisterEvent;
 import com.group4.qrcodepayment.exception.resterrors.TwilioFailedException;
 import com.group4.qrcodepayment.service.OtpServiceImpl;

@@ -43,10 +43,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                .authorizeRequests()
                .antMatchers(URLs.MPESA_FUND_ACCOUNT,URLs.TRANSFER, URLs.ACCOUNT_LINK).hasRole("USER")
                .antMatchers(URLs.HOME, URLs.MPESA_TOKEN, URLs.MPESA_REGISTER).hasAnyRole("USER","ADMIN")
-
+               .antMatchers("/acc/**").authenticated()
                .antMatchers(URLs.LOGIN,URLs.REGISTER,URLs.SEND_OTP,
                 URLs.ASSERT_REGISTRATION, URLs.VALIDATE_OTP, "/externals/coop/transfer/result", URLs.MPESA_CONFIRMATION,
-       URLs.MPESA_VALIDATION).permitAll();
+       URLs.MPESA_VALIDATION).permitAll()
+                       .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 //                                       .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);

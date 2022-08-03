@@ -1,4 +1,4 @@
-package com.group4.qrcodepayment.dto;
+package com.group4.qrcodepayment.dto.Accounts;
 
 import com.group4.qrcodepayment.models.UserInfo;
 import lombok.AllArgsConstructor;

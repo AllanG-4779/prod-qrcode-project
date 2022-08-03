@@ -1,4 +1,4 @@
-package com.group4.qrcodepayment.dto;
+package com.group4.qrcodepayment.dto.Auth;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

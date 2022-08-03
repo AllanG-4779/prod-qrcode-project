@@ -1,7 +1,6 @@
 package com.group4.qrcodepayment.service;
 
 import com.group4.qrcodepayment.Repositories.QPayAccountRepo;
-import com.group4.qrcodepayment.dto.QpayAccountDto;
 import com.group4.qrcodepayment.models.QPayAccount;
 import com.group4.qrcodepayment.models.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;

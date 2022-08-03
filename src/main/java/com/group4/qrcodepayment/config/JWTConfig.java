@@ -18,4 +18,5 @@ public class JWTConfig {
 
     private Integer expire;
     private String secret;
+
 }

@@ -1,8 +1,9 @@
 package com.group4.qrcodepayment.exception;
 
 import com.group4.qrcodepayment.customresponse.RegistrationResponse;
-import com.group4.qrcodepayment.dto.UsernameOrEmailExistsDto;
+import com.group4.qrcodepayment.dto.Auth.UsernameOrEmailExistsDto;
 import com.group4.qrcodepayment.exception.resterrors.*;
+import com.twilio.exception.ApiException;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -75,7 +76,7 @@ public class RestExceptionHandler extends Exception {
                 response
         );
     }
-    @ExceptionHandler(TwilioFailedException.class)
+    @ExceptionHandler({TwilioFailedException.class, ApiException.class})
     public ResponseEntity<?> handleTwilioError(TwilioFailedException ex){
          Map<Object, Object> response = new LinkedHashMap<>();
          response.put("code", 408);
@@ -194,4 +195,27 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
                   .build();
          return ResponseEntity.status(500).body(res);
    }
+   @ExceptionHandler(InsuffientBalanceException.class)
+    public ResponseEntity<?> handleNotEnoughBalanceException(InsuffientBalanceException bal){
+
+         ExceptionRes res = ExceptionRes.builder()
+                 .debugMessage("ERR_NOT_ENOUGH_BALANCE")
+                 .message(bal.getMessage())
+                 .code(403)
+                 .build();
+         return ResponseEntity.status(403).body(res);
+
+   }
+    @ExceptionHandler(RecipientNotFound.class)
+    public ResponseEntity<?> handleRecipientNotFoundException(RecipientNotFound recipientNotFound){
+
+        ExceptionRes res = ExceptionRes.builder()
+                .debugMessage("ERR_USER_NOT_FOUND_IN_DB")
+                .message(recipientNotFound.getMessage())
+                .code(404)
+                .build();
+        return ResponseEntity.status(404).body(res);
+
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.group4.qrcodepayment.config;
 
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,4 +20,12 @@ public class TwilioConfig {
     private String sid;
     private String authToken;
     private String trialNumber;
+
+    public void sendSMS(String From, String phone, String body){
+        Message.creator(
+                new PhoneNumber("+254"+phone),
+                new PhoneNumber(From),
+                body
+        ).create();
+    }
 }
