@@ -205,7 +205,7 @@ public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws Unsup
                         " New QPay account balance is "+ (senderQPay.getBalance()-transactionResultDto.getAmount());
                 String receiverBody = transactionResultDto.getReceiver().getTransactionRef() + " Confirmed on " + senderDate.format(date) +" at " +senderDate.format(time)+" "+"You have received Ksh "+transactionResultDto.getAmount()+"" +
                         " from "+sender.getFirstName()+" " +sender.getSecondName()+" "+transactionResultDto.getSender()+"" +
-                        " New QPay account balance is Ksh. "+ (recipientAccount.getBalance()- transactionResultDto.getAmount());
+                        " New QPay account balance is Ksh. "+ (recipientAccount.getBalance()+transactionResultDto.getAmount());
 
             twilioConfig.sendSMS(twilioConfig.getTrialNumber(), transactionResultDto.getSender(), body);
                 twilioConfig.sendSMS(twilioConfig.getTrialNumber(), transactionResultDto.getReceiver().getAccount(), receiverBody);

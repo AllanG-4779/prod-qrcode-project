@@ -63,7 +63,7 @@ public class Accounts {
         throw new UserPrincipalNotFoundException("user not found");
     }
         AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
-        String key = "Cnd80751xh.10@27.com";
+        String key = "Cnd80751xh1021xh";
 //        set the key
         textEncryptor.setPassword(key);
 //        encrypt the values
@@ -136,9 +136,9 @@ public class Accounts {
 //                .amount(Integer.parseInt(details[2].split("=")[1]))
 //                .build();
         TransferRequestDto resultDto = TransferRequestDto.builder()
-                .recipientPhone("747407365")
+                .recipientPhone("757574590")
                 .source("QPAY")
-                .amount(900)
+                .amount(500)
                 .build();
 
       return  accountService.sendAmountToUser(resultDto);
