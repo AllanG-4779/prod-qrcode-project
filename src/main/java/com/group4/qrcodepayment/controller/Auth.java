@@ -193,22 +193,7 @@ public class Auth {
             map.put("message", "Successfully verified");
             map.put("timestamp", LocalDateTime.now());
 //          update the account with account verified token {activated time, phone number, user_id}
-            UserInfo user = userRegistrationService.findUserByPhone(code.getPhone());
-            if(user.getPassword() != null) {
-//
-                StrongTextEncryptor encryptor = new StrongTextEncryptor();
-                encryptor.setPassword("pass");
 
-              String message = encryptor.encrypt("" + LocalDateTime.now() + "=" +
-                      userRegistrationService
-                              .findUserByPhone(code.getPhone()).getPhone());
-
-                otpService.updateOtp(message, code.getPhone());
-
-               map.put("security_token", message);
-            }else{
-                throw new PasswordAlreadyCleanedException();
-            }
             return ResponseEntity.status(200).body(map);
 
         }
