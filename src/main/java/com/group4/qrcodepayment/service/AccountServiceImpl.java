@@ -129,7 +129,7 @@ public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws Unsup
             QPayAccount senderQPay = qPayAccount.getQPayAccount(sender);
 
             int balance = senderQPay.getBalance();
-            if(balance<requestDto.getAmount()){
+            if(balance<Integer.parseInt(requestDto.getAmount())){
                 throw new InsuffientBalanceException("Not enough money in your account to transfer "+requestDto.getAmount());
 
             }else{
@@ -144,19 +144,19 @@ public AccountLinkingDto linkAccount(AccountLinkingDto accountLink) throws Unsup
                     throw new RecipientNotFound("Account to be credited not found");
                 }
 //                credit the account
-                qPayAccount.updateAccount(requestDto.getAmount(),actualRecipient);
+                qPayAccount.updateAccount(Integer.parseInt(requestDto.getAmount()),actualRecipient);
 //                debit the senders account
-                qPayAccount.updateAccount(requestDto.getAmount()*-1, sender);
+                qPayAccount.updateAccount(Integer.parseInt(requestDto.getAmount())*-1, sender);
 
 
 
                 transactionResultDto=TransactionResultDto.builder()
-                        .amount(requestDto.getAmount())
+                        .amount(Integer.parseInt(requestDto.getAmount()))
                         .dateTime(LocalDateTime.now())
                         .transactionRef(new RandomGenerator().generateRandom())
                         .receiver(QPayReceiver.builder()
                                 .account(requestDto.getRecipientPhone())
-                                .amount(requestDto.getAmount())
+                                .amount(Integer.parseInt(requestDto.getAmount()))
                                 .fullName(actualRecipient.getFirstName()+" "+actualRecipient.getSecondName())
                                 .transactionRef(new RandomGenerator().generateRandom())
                                 .transactionType('D')

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TransferRequestDto {
     private String source;
-    private Integer amount;
+    private String amount="0";
     private String recipientPhone;
 }
 

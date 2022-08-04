@@ -53,7 +53,7 @@ public class Accounts {
 
     @GetMapping("/myqr-code")
     public byte[] generateMyQr(@RequestParam int width, @RequestParam int  height,
-                               @RequestParam(required = false) Integer amount) throws IOException, WriterException, AuthenticationNotFoundException {
+                               @RequestParam(required = false) String amount) throws IOException, WriterException, AuthenticationNotFoundException {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if(!authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken){
         throw new AuthenticationNotFoundException("Seems you are not authenticated, please login ");
@@ -116,7 +116,7 @@ public class Accounts {
   }
 //  To pay, we need the token in the QR code
     @PostMapping("/secure/transfer")
-    public TransactionResultDto transferCash(@RequestParam(required = false) String paymentHash) throws AuthenticationNotFoundException, InsuffientBalanceException, RecipientNotFound, TransactionNotFoundException {
+    public TransferRequestDto transferCash(@RequestParam(required = false) String paymentHash) throws AuthenticationNotFoundException, InsuffientBalanceException, RecipientNotFound, TransactionNotFoundException {
 /*
  *  The payment hash should contain the source of funds
  *  The amount to be paid
@@ -124,27 +124,46 @@ public class Accounts {
  *  In case of bank, please pass the bank code, QPAY for internal transfer and MPESA for mpesa
  *  source
 **/
-//        AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
-//        textEncryptor.setPassword("Cnd80751xh.10@27.com");
-//        String paymentDetails =  textEncryptor.decrypt(paymentHash);
-//        String[] details = paymentDetails.split(" ");
-//        OurRequest
 
-//        return TransferRequestDto.builder()
-//                .recipientPhone(details[0].split("=")[1])
-//                .source(details[1].split("=")[1])
-//                .amount(Integer.parseInt(details[2].split("=")[1]))
+//        TransferRequestDto resultDto = TransferRequestDto.builder()
+//                .recipientPhone("757574590")
+//                .source("QPAY")
+//                .amount(500)
 //                .build();
-        TransferRequestDto resultDto = TransferRequestDto.builder()
-                .recipientPhone("757574590")
-                .source("QPAY")
-                .amount(500)
-                .build();
+//
+//      return  accountService.sendAmountToUser(resultDto);
+//
+return null;
 
-      return  accountService.sendAmountToUser(resultDto);
+    }
+//Get recipient details
+    @GetMapping("/receiver")
+    public TransferRequestDto getRecipient(@RequestParam String qrcodeContent){
+        AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
+        textEncryptor.setPassword("Cnd80751xh1021xh");
+        String paymentDetails =  textEncryptor.decrypt(qrcodeContent);
+        String[] details = paymentDetails.split(" ");
+
+//        Check if amount is passed
+        String [] amountArray = details[2].split("=");
+
+
+        if(amountArray.length>1){
+            System.out.println(amountArray.length);
+            return TransferRequestDto.builder()
+                    .recipientPhone(details[0].split("=")[1])
+                    .source(details[1].split("=")[1])
+                    .amount(details[2].split("=")[1])
+                    .build();
+        }
+        else{
+            return TransferRequestDto.builder()
+                    .recipientPhone(details[0].split("=")[1])
+                    .source(details[1].split("=")[1])
+                    .build();
+        }
 
 
 
     }
-
 }
