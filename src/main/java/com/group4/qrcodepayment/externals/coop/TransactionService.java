@@ -150,6 +150,7 @@ try{
                   .transactionAmount(sourceDto.getAmount())
                   .transactionType('D')
                   .date(LocalDateTime.now())
+                  .status("PENDING")
                   .userId(user)
                   .build();
           recordTransactionService.addTransaction(transactionDto);
