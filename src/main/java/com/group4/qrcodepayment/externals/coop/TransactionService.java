@@ -144,7 +144,7 @@ try{
 //          save the transaction
           TransactionDto transactionDto = TransactionDto
                   .builder()
-                  .sourceAccount(sourceDto.getAccountNumber())
+                  .sourceAccount("Co-op Bank")
                   .destinationAccount(destinationDto.getAccountNumber())
                   .transactionRef(TransferReference)
                   .transactionAmount(sourceDto.getAmount())
