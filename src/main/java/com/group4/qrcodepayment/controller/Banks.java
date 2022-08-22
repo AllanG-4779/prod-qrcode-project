@@ -77,6 +77,9 @@ public class Banks {
 
                 .build());
     }
-
+    @GetMapping("/supported")
+    public List<Bank> getAllSupportedBanks(){
+        return bankService.getSupported();
+    }
 
 }

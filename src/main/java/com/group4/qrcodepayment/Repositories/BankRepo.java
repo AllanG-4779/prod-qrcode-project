@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Repository
 public interface BankRepo extends JpaRepository<Bank, String> {
@@ -17,4 +18,6 @@ public interface BankRepo extends JpaRepository<Bank, String> {
     @Transactional
     @Query("UPDATE Bank  bank set bank.supported=true WHERE bank.ipslCode=?1")
     int setSupported(String name) throws BankNotFoundException;
+     @Query("SELECT   u FROM Bank u where u.supported=true")
+     List<Bank> findSupported();
 }

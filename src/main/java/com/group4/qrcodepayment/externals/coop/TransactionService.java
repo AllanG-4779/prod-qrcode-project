@@ -29,6 +29,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Objects;
@@ -56,7 +59,7 @@ public class TransactionService {
 
   public ResponseEntity<?> fundAccount(PaymentDetailsFromUser detailsFromUser)
           throws JsonProcessingException, BankLinkedException,
-          CopBankTransactionException, TransactionNotFoundException {
+          CopBankTransactionException, TransactionNotFoundException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 //      who is logged in
       UserInfo user = null;
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -67,7 +70,7 @@ public class TransactionService {
       SourceDto sourceDto = SourceDto.builder()
               .AccountNumber(accountService.getUserAccountNumber())
               .Amount(detailsFromUser.getAmount())
-              .Narration("FUNDING QPAY ACCOUNT")
+              .Narration("Funding QPay Account")
               .TransactionCurrency("KES")
               .build();
 //      build the destination

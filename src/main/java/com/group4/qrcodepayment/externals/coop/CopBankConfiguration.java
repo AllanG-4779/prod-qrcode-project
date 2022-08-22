@@ -6,6 +6,7 @@ import com.group4.qrcodepayment.externals.coop.dto.AccessTokenRequestDto;
 import com.group4.qrcodepayment.externals.coop.dto.AccessTokenResDto;
 import com.group4.qrcodepayment.externals.coop.dto.RegisterAppDto;
 import com.group4.qrcodepayment.externals.coop.dto.RegisterAppResDto;
+import com.group4.qrcodepayment.util.RandomGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Collections;
 
@@ -34,9 +38,9 @@ public class CopBankConfiguration {
 
 
 //    Register the app by sending an internal request
-    public void registerApp() throws JsonProcessingException {
+    public void registerApp() throws JsonProcessingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 //  initialize the template
-        restTemplate = new RestTemplate();
+        restTemplate = new RestTemplate(new RandomGenerator().disableSsL());
         ObjectMapper objectMapper = new ObjectMapper();
 
 //  set the headers
@@ -74,8 +78,8 @@ public class CopBankConfiguration {
 
     }
 
-    public String getToken() throws JsonProcessingException {
-        restTemplate = new RestTemplate();
+    public String getToken() throws JsonProcessingException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        restTemplate = new RestTemplate(new RandomGenerator().disableSsL());
 //        get the headers right
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.valueOf(MediaType.APPLICATION_FORM_URLENCODED_VALUE));

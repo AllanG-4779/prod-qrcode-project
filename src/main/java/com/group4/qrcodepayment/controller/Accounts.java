@@ -4,7 +4,10 @@ import com.google.zxing.WriterException;
 import com.group4.qrcodepayment.Repositories.BankRepo;
 import com.group4.qrcodepayment.Repositories.TransactionRepo;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
-import com.group4.qrcodepayment.dto.Accounts.*;
+import com.group4.qrcodepayment.dto.Accounts.AccountLinkingDto;
+import com.group4.qrcodepayment.dto.Accounts.HomeDto;
+import com.group4.qrcodepayment.dto.Accounts.TransactionListDto;
+import com.group4.qrcodepayment.dto.Accounts.TransferRequestDto;
 import com.group4.qrcodepayment.exception.InsuffientBalanceException;
 import com.group4.qrcodepayment.exception.RecipientNotFound;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
@@ -18,6 +21,8 @@ import com.group4.qrcodepayment.service.QPayAccountImpl;
 import com.group4.qrcodepayment.util.QRCodeGenerator;
 import lombok.AllArgsConstructor;
 import org.jasypt.util.text.AES256TextEncryptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,6 +33,7 @@ import java.io.IOException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @RestController
 @AllArgsConstructor
@@ -67,7 +73,7 @@ public class Accounts {
 //        set the key
         textEncryptor.setPassword(key);
 //        encrypt the values
-        String message = "name="+user.getFirstName()+user.getSecondName()+ " phone="+user.getPhone()+" amount="+amount;
+        String message = "name="+user.getFirstName().trim()+user.getSecondName().trim()+ " phone="+user.getPhone()+" amount="+amount;
         String hash = textEncryptor.encrypt(message);
 
 
@@ -123,33 +129,31 @@ public class Accounts {
  *  Who is to be paid
  *  In case of bank, please pass the bank code, QPAY for internal transfer and MPESA for mpesa
  *  source
+ *
 **/
 
-//        TransferRequestDto resultDto = TransferRequestDto.builder()
-//                .recipientPhone("757574590")
-//                .source("QPAY")
-//                .amount(500)
-//                .build();
-//
-//      return  accountService.sendAmountToUser(resultDto);
-//
+
 return null;
 
     }
 //Get recipient details
     @GetMapping("/receiver")
     public TransferRequestDto getRecipient(@RequestParam String qrcodeContent){
+        Logger log  = LoggerFactory.getLogger(this.getClass());
         AES256TextEncryptor textEncryptor = new AES256TextEncryptor();
         textEncryptor.setPassword("Cnd80751xh1021xh");
+
         String paymentDetails =  textEncryptor.decrypt(qrcodeContent);
+        log.error("This is the content" +paymentDetails);
         String[] details = paymentDetails.split(" ");
+
 
 //        Check if amount is passed
         String [] amountArray = details[2].split("=");
 
 
         if(amountArray.length>1){
-            System.out.println(amountArray.length);
+
             return TransferRequestDto.builder()
                     .recipientPhone(details[0].split("=")[1])
                     .source(details[1].split("=")[1])

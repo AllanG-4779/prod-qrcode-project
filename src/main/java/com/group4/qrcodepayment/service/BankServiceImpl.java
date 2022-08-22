@@ -35,4 +35,9 @@ public class BankServiceImpl implements BankService{
     public int supportBank(String bankName) throws BankNotFoundException {
        return  bankRepo.setSupported(bankName);
     }
+
+    @Override
+    public List<Bank> getSupported() {
+        return bankRepo.findSupported();
+    }
 }

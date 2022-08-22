@@ -17,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+
 @RestController
 @RequestMapping("/externals/coop")
 
@@ -38,7 +42,7 @@ public class TransactionController {
     }
     @PostMapping("/transfer")
     public ResponseEntity<?> sendAmountToAccount(@RequestBody PaymentDetailsFromUser detailsFromUser)
-            throws JsonProcessingException, BankLinkedException, CopBankTransactionException, TransactionNotFoundException {
+            throws JsonProcessingException, BankLinkedException, CopBankTransactionException, TransactionNotFoundException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
     return transactionService.fundAccount(detailsFromUser);
 //         return new CopBankConfiguration().getToken();
 

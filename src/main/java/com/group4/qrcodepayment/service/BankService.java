@@ -12,4 +12,5 @@ public interface BankService {
     Bank getBankByIpslCode(String code);
     List<Bank> addNewBank(List<BankDto> bankDto);
     int supportBank(String bankName) throws BankNotFoundException;
+    List<Bank> getSupported();
 }
