@@ -2,27 +2,28 @@ package com.group4.qrcodepayment.controller;
 
 import com.google.zxing.WriterException;
 import com.group4.qrcodepayment.Repositories.BankRepo;
+import com.group4.qrcodepayment.Repositories.QPayAccountRepo;
 import com.group4.qrcodepayment.Repositories.TransactionRepo;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
-import com.group4.qrcodepayment.dto.Accounts.AccountLinkingDto;
-import com.group4.qrcodepayment.dto.Accounts.HomeDto;
-import com.group4.qrcodepayment.dto.Accounts.TransactionListDto;
-import com.group4.qrcodepayment.dto.Accounts.TransferRequestDto;
+import com.group4.qrcodepayment.dto.Accounts.*;
 import com.group4.qrcodepayment.exception.InsuffientBalanceException;
 import com.group4.qrcodepayment.exception.RecipientNotFound;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.TransactionNotFoundException;
 import com.group4.qrcodepayment.exception.resterrors.UnsupportedBankException;
+import com.group4.qrcodepayment.externals.coop.dto.InternalTransferDto;
 import com.group4.qrcodepayment.models.QPayAccount;
 import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
+import com.group4.qrcodepayment.service.QP2QPTransfer;
 import com.group4.qrcodepayment.service.QPayAccountImpl;
 import com.group4.qrcodepayment.util.QRCodeGenerator;
 import lombok.AllArgsConstructor;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,13 +41,15 @@ import java.util.stream.Collectors;
 @RequestMapping("/acc")
 @CrossOrigin(origins = "*")
 public class Accounts {
-
-    private BankRepo repo;
+@Autowired
+    private QPayAccountRepo qPayAccountRepo;
 
     private UserRepoInt userRepoInt;
     private AccountServiceImpl accountService;
     private QPayAccountImpl qPayAccountService;
     private TransactionRepo transactionRepo;
+    @Autowired
+    private QP2QPTransfer   qp2QPTransfer;
     @PostMapping("/link")
     public AccountLinkingDto linkAccount(@RequestBody @Valid AccountLinkingDto accountLink)
             throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
@@ -122,18 +125,43 @@ public class Accounts {
   }
 //  To pay, we need the token in the QR code
     @PostMapping("/secure/transfer")
-    public TransferRequestDto transferCash(@RequestParam(required = false) String paymentHash) throws AuthenticationNotFoundException, InsuffientBalanceException, RecipientNotFound, TransactionNotFoundException {
+    public QP2QPTransactionResultDto transferCash(@RequestBody InternalTransferDto sendParam) throws AuthenticationNotFoundException, InsuffientBalanceException, RecipientNotFound, TransactionNotFoundException {
+
 /*
- *  The payment hash should contain the source of funds
- *  The amount to be paid
- *  Who is to be paid
- *  In case of bank, please pass the bank code, QPAY for internal transfer and MPESA for mpesa
- *  source
- *
+ * To transact, upon scanning the QR code,
+ * the recipient number is decoded but not shown to the user.
+ * The number is used to send cash after appropriate authorization
+ * And the amount
 **/
+//Get the senders account after transactions
+  QPayAccount recieverAccount = qPayAccountRepo.findQPayAccountByUserId(userRepoInt.findByUsername(sendParam.getReceiver()));
+  int senderBefore = qp2QPTransfer.getSenderAccount().getBalance();
+  int receiverBefore = recieverAccount.getBalance();
+
+ QP2QPTransactionResultDto result =  qp2QPTransfer.Transfer(sendParam);
+
+try{
+    Thread.sleep(3000);
+}catch(InterruptedException ex){
+    Thread.currentThread().interrupt();
+}
+  result.setSender(Summary.builder()
+                  .beforeBal(String.valueOf(senderBefore))
+                  .afterBal(String.valueOf(qPayAccountRepo.findQPayAccountByUserId(
+                          userRepoInt.findByUsername(SecurityContextHolder.getContext()
+                                  .getAuthentication().getName())
+                  ).getBalance()-Integer.parseInt(sendParam.getAmount())))
+         .build());
+  result.setReceiver(Summary.builder()
+          .beforeBal(String.valueOf(receiverBefore))
+          .afterBal(String.valueOf(receiverBefore+Integer.parseInt(sendParam.getAmount())))
+          .build());
+  return result;
 
 
-return null;
+
+
+
 
     }
 //Get recipient details

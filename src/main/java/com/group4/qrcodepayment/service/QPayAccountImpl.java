@@ -23,11 +23,6 @@ public class QPayAccountImpl implements QPayAccountService {
 
 
         qPayAccountRepo.updateBalance(amount, user);
-
-
-
-
-
     }
 
     @Override
