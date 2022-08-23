@@ -35,7 +35,7 @@ public class LoginRegisterEventHandler {
  //     send an sms or notification
     String OTP = getOTP();
 try{
-    Message message = Message.creator(
+    Message.creator(
             new PhoneNumber("+254"+loginRegisterEvent.getPhoneNumber()),
             new PhoneNumber(twilioConfig.getTrialNumber()),
             "\nYour OTP for QPay is: " +

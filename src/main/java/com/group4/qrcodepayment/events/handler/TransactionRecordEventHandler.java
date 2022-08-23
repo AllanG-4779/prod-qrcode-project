@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Component
 public class TransactionRecordEventHandler {
@@ -60,8 +61,8 @@ public class TransactionRecordEventHandler {
         Message.creator(
                 new PhoneNumber("+254"+userInfo.getPhone()),
                 new PhoneNumber(twilioConfig.getTrialNumber()),
-                transferResponse.destinations.get(0).ReferenceNumber + " Confirmed on "+ LocalDate.now()
-                        +" at "+LocalDateTime.now().toString().split("T")[1]+
+                transferResponse.destinations.get(0).ReferenceNumber + " Confirmed on "+ LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
+                        +" at "+LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm a"))+
                         " Ksh"+transferResponse.source.Amount+" " +
                         "has been deposited to your QPay Account from your "+bank.getName()+" Bank Account XXXXXX" +
                         transferResponse.source.AccountNumber.substring(transferResponse.source.AccountNumber.length()-4)+

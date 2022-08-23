@@ -7,6 +7,7 @@ import com.group4.qrcodepayment.Repositories.TransactionRepo;
 import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.dto.Accounts.*;
 import com.group4.qrcodepayment.exception.InsuffientBalanceException;
+import com.group4.qrcodepayment.exception.InvalidAmountException;
 import com.group4.qrcodepayment.exception.RecipientNotFound;
 import com.group4.qrcodepayment.exception.resterrors.AccountLinkFailedException;
 import com.group4.qrcodepayment.exception.resterrors.AuthenticationNotFoundException;
@@ -18,7 +19,9 @@ import com.group4.qrcodepayment.models.UserInfo;
 import com.group4.qrcodepayment.service.AccountServiceImpl;
 import com.group4.qrcodepayment.service.QP2QPTransfer;
 import com.group4.qrcodepayment.service.QPayAccountImpl;
+import com.group4.qrcodepayment.service.TransactionServiceImpl;
 import com.group4.qrcodepayment.util.QRCodeGenerator;
+import com.group4.qrcodepayment.util.RandomGenerator;
 import lombok.AllArgsConstructor;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.slf4j.Logger;
@@ -29,9 +32,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.DateTimeAtCompleted;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.nio.file.attribute.UserPrincipalNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,13 +49,20 @@ import java.util.stream.Collectors;
 public class Accounts {
 @Autowired
     private QPayAccountRepo qPayAccountRepo;
-
+@Autowired
     private UserRepoInt userRepoInt;
+@Autowired
     private AccountServiceImpl accountService;
+@Autowired
     private QPayAccountImpl qPayAccountService;
+@Autowired
     private TransactionRepo transactionRepo;
     @Autowired
     private QP2QPTransfer   qp2QPTransfer;
+    @Autowired
+    private RandomGenerator randomGenerator;
+    @Autowired
+    private TransactionServiceImpl transactionService;
     @PostMapping("/link")
     public AccountLinkingDto linkAccount(@RequestBody @Valid AccountLinkingDto accountLink)
             throws UnsupportedBankException, AccountLinkFailedException, AuthenticationNotFoundException {
@@ -76,7 +89,8 @@ public class Accounts {
 //        set the key
         textEncryptor.setPassword(key);
 //        encrypt the values
-        String message = "name="+user.getFirstName().trim()+user.getSecondName().trim()+ " phone="+user.getPhone()+" amount="+amount;
+        String message = "name="+user.getFirstName().trim()+user.getSecondName()
+                .trim()+ " phone="+user.getPhone()+" amount="+amount;
         String hash = textEncryptor.encrypt(message);
 
 
@@ -87,7 +101,7 @@ public class Accounts {
     }
   @GetMapping("/home")
     private HomeDto homePage() throws AuthenticationNotFoundException {
-
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm a");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication.isAuthenticated() &&
@@ -104,7 +118,7 @@ public class Accounts {
                                    .destinationAccount(transactions.getDestinationAccount())
                                    .sourceAccount(transactions.getSourceAccount())
                                    .transactionRef(transactions.getTransactionRef())
-                                   .dateTime(transactions.getDateTime())
+                                   .dateTime(transactions.getDateTime().format(formatter))
                                    .status(transactions.getStatus())
                                    .transactionType(transactions.getTransactionType().getTransactionId())
                                    .build()).collect(Collectors.toList());
@@ -125,8 +139,10 @@ public class Accounts {
   }
 //  To pay, we need the token in the QR code
     @PostMapping("/secure/transfer")
-    public QP2QPTransactionResultDto transferCash(@RequestBody InternalTransferDto sendParam) throws AuthenticationNotFoundException, InsuffientBalanceException, RecipientNotFound, TransactionNotFoundException {
-
+    public QP2QPTransactionResultDto transferCash(@RequestBody InternalTransferDto sendParam) throws AuthenticationNotFoundException, InsuffientBalanceException, RecipientNotFound, TransactionNotFoundException, InvalidAmountException {
+     UserInfo reciever = userRepoInt.findByUsername(sendParam.getReceiver());
+     UserInfo sender=  userRepoInt.findByUsername(SecurityContextHolder.getContext()
+             .getAuthentication().getName());
 /*
  * To transact, upon scanning the QR code,
  * the recipient number is decoded but not shown to the user.
@@ -134,34 +150,76 @@ public class Accounts {
  * And the amount
 **/
 //Get the senders account after transactions
-  QPayAccount recieverAccount = qPayAccountRepo.findQPayAccountByUserId(userRepoInt.findByUsername(sendParam.getReceiver()));
-  int senderBefore = qp2QPTransfer.getSenderAccount().getBalance();
-  int receiverBefore = recieverAccount.getBalance();
+        int receiverBefore;
+        int senderBefore;
+
+     try{
+         QPayAccount recieverAccount = qPayAccountRepo.findQPayAccountByUserId(reciever);
+         senderBefore = qp2QPTransfer.getSenderAccount().getBalance();
+          receiverBefore = recieverAccount.getBalance();
+     }catch(NullPointerException ex){
+         throw new RecipientNotFound("Recipient not registered on QPay");
+     }
+
 
  QP2QPTransactionResultDto result =  qp2QPTransfer.Transfer(sendParam);
 
-try{
-    Thread.sleep(3000);
-}catch(InterruptedException ex){
-    Thread.currentThread().interrupt();
-}
+
   result.setSender(Summary.builder()
                   .beforeBal(String.valueOf(senderBefore))
                   .afterBal(String.valueOf(qPayAccountRepo.findQPayAccountByUserId(
-                          userRepoInt.findByUsername(SecurityContextHolder.getContext()
-                                  .getAuthentication().getName())
+                         sender
                   ).getBalance()-Integer.parseInt(sendParam.getAmount())))
          .build());
   result.setReceiver(Summary.builder()
           .beforeBal(String.valueOf(receiverBefore))
           .afterBal(String.valueOf(receiverBefore+Integer.parseInt(sendParam.getAmount())))
           .build());
-  return result;
+
+
+// save the credit transaction
+        TransactionDto credit =
+                TransactionDto.builder()
+                        .status("Completed")
+                        .transactionType('D')
+                        .transactionRef(result.getTransactionRef()+"_B")
+                        .userId(reciever)
+                        .sourceAccount(sender.getPhone())
+                        .destinationAccount(reciever.getPhone())
+                        .transactionAmount(result.getAmount())
+                        .date(LocalDateTime.now())
+
+                        .build();
+
+
+        transactionService.addTransaction(
+              credit
+        );
+        TransactionDto debit = TransactionDto.builder()
+                .status("Completed")
+                .transactionType('W')
+                .transactionRef(result.getTransactionRef())
+                .userId(sender)
+                .sourceAccount(sender.getPhone())
+                .destinationAccount(reciever.getPhone())
+                .transactionAmount(result.getAmount())
+                .date(LocalDateTime.now())
+
+
+                .build();
+
+
+//        debit transaction
 
 
 
 
+        transactionService.addTransaction(debit);
+//    Send the SMS
+        randomGenerator.SendDualSMS(sender,reciever,credit,debit);
 
+
+        return result;
 
     }
 //Get recipient details

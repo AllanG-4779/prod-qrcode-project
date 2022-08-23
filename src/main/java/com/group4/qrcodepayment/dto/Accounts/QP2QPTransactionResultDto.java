@@ -15,6 +15,6 @@ public class QP2QPTransactionResultDto {
     private Summary sender;
     private Summary receiver;
     private String amount;
-    private LocalDateTime transactionTime;
+    private String transactionTime;
     private String transactionRef;
 }

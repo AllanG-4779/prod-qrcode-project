@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public class TransactionListDto {
     private String transactionRef;
     private String amount;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private String sourceAccount;
     private String destinationAccount;
     private String status;

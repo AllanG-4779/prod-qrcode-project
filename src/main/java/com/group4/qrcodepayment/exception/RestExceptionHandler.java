@@ -218,4 +218,18 @@ public ResponseEntity<?> handleUnsupportedBankException(UnsupportedBankException
 
     }
 
+
+    @ExceptionHandler(InvalidAmountException.class)
+    public ResponseEntity<?> handleInvalidAmount(InvalidAmountException amountException){
+
+        ExceptionRes res = ExceptionRes.builder()
+                .debugMessage("BAD_AMOUNT")
+                .message(amountException.getMessage())
+                .code(400)
+                .build();
+        return ResponseEntity.status(404).body(res);
+
+    }
+
 }
+
