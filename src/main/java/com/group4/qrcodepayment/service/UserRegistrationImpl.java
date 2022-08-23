@@ -94,6 +94,12 @@ public class UserRegistrationImpl implements UserRegistrationService{
         userRepo.updatePassword(phone ,password);
     }
 
+    @Override
+    public void flagAccount( String userId, Boolean flag) {
+        userRepo.setFlag(userId,flag);
+    }
+
+
     // @Override
 //    public UserInfo findUserByAccountAndBank(String accountNumber, Bank bankId) {
 //        return userRepo.findUserByBankIdAndAccountNumber(accountNumber, bankId);

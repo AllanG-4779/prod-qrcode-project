@@ -18,7 +18,9 @@ public class OneTimeCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long Id;
+    @Column(length = 1050)
     private String code;
+
     private String owner;
     private LocalDateTime issueAt;
 

@@ -31,8 +31,11 @@ public class UserInfo {
     private String phone;
 
     private String password;
+//    Used for flagging the account
+    private Boolean accountFlagged;
     private String roles = "USER";
     private boolean isConfirmed = false;
 //    A user can have many roles;
+
 
 }

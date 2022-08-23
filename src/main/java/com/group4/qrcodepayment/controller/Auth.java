@@ -1,5 +1,6 @@
 package com.group4.qrcodepayment.controller;
 
+import com.group4.qrcodepayment.Repositories.UserRepoInt;
 import com.group4.qrcodepayment.config.JWTConfig;
 import com.group4.qrcodepayment.config.TwilioConfig;
 import com.group4.qrcodepayment.dto.Auth.*;
@@ -54,6 +55,8 @@ public class Auth {
     AuthenticationManager authenticationManager;
     @Autowired
     private JWTUtils jwtUtils;
+    @Autowired
+    private UserRepoInt userRepo;
     @Autowired
     private LoginRegistrationEventPublisher loginRegistrationEventPublisher;
     @Autowired
@@ -189,11 +192,21 @@ public class Auth {
         if(otpDto.getCode().equals(code.getCode()) &&
                 LocalDateTime.now().isBefore(otpDto.getExpireAt())
         ){
+            if(userRegistrationService.findUserByPhone
+                    (code.getPhone()).getAccountFlagged()){
+                StrongTextEncryptor passResetToken = new StrongTextEncryptor();
+                passResetToken.setPassword("pass");
+//                Encrypt the user details and the time the code was stamped
+                String message = LocalDateTime.now()+"="+userRegistrationService
+                        .findUserByPhone(code.getPhone()).getPhone();
+                String encrypted = passResetToken.encrypt(message);
+                otpService.updateOtp(encrypted,code.getPhone());
+                map.put("securityToken",encrypted);
+            }
+
             map.put("code", 201);
             map.put("message", "Successfully verified");
             map.put("timestamp", LocalDateTime.now());
-//          update the account with account verified token {activated time, phone number, user_id}
-
             return ResponseEntity.status(200).body(map);
 
         }
@@ -249,6 +262,7 @@ public class Auth {
     }
     @GetMapping("/forgot")
     public void forgotPassword(@RequestParam String phoneNumber){
+         userRegistrationService.flagAccount(phoneNumber, true);
 //        Given the phone number, send the otp
 
        String code = registerEventHandler.getOTP();

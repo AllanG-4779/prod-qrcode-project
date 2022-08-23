@@ -32,4 +32,10 @@ public interface UserRepoInt extends JpaRepository<UserInfo, Long> {
     @Modifying
     @Query("UPDATE UserInfo  user SET user.password=?2 WHERE user.phone=?1")
     void updatePassword(String phone,String password);
+@Modifying
+@Transactional
+@Query("UPDATE UserInfo  user SET user.accountFlagged=?2 WHERE user.phone=?1")
+    void setFlag(String userId, Boolean flag);
+
+
 }

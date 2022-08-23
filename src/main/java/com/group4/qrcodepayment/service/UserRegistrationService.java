@@ -4,6 +4,7 @@ import com.group4.qrcodepayment.exception.resterrors.PhoneOrEmailExistsException
 import com.group4.qrcodepayment.exception.resterrors.RegistrationFailedException;
 import com.group4.qrcodepayment.models.UserInfo;
 
+import javax.swing.text.StyledEditorKit;
 import java.sql.SQLException;
 
 public interface UserRegistrationService {
@@ -20,5 +21,7 @@ public interface UserRegistrationService {
     UserInfo findUserByPhone(String phone);
 
     void updateUserpassword(String phone, String password);
+    void flagAccount(String userId, Boolean flag);
+
    // UserInfo findUserByAccountAndBank(String accountNumber, String bankId);
 }
