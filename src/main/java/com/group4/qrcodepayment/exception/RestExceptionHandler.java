@@ -42,7 +42,7 @@ public class RestExceptionHandler extends Exception {
         UsernameOrEmailExistsDto user =  UsernameOrEmailExistsDto.builder()
                 .code(601)
                 .message(ex.getMessage())
-                .localDateTime(LocalDateTime.now())
+                .localDateTime(LocalDateTime.now().plusHours(3))
                 .build();
         return new ResponseEntity<>(user,HttpStatus.CONFLICT);
 
@@ -76,13 +76,13 @@ public class RestExceptionHandler extends Exception {
                 response
         );
     }
-    @ExceptionHandler({TwilioFailedException.class, ApiException.class})
-    public ResponseEntity<?> handleTwilioError(TwilioFailedException ex){
+    @ExceptionHandler({ApiException.class})
+    public ResponseEntity<?> handleTwilioError( ApiException ex){
          Map<Object, Object> response = new LinkedHashMap<>();
          response.put("code", 408);
-         response.put("message", ex.getUserMessage());
-         response.put("sentAt", LocalDateTime.now());
-         response.put("debugMessage", ex.getMessage());
+         response.put("message", "SMS cannot be sent at this time");
+         response.put("sentAt", LocalDateTime.now().plusHours(3));
+
 
         return ResponseEntity.status(408).body(response);
     }
