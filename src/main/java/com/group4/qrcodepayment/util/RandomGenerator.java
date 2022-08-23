@@ -74,7 +74,7 @@ public class RandomGenerator {
           Message.creator(
               new PhoneNumber("+254"+sender.getPhone()),
               new PhoneNumber(config.getTrialNumber()),
-                  senderDto.getTransactionRef() + " confirmed on "+ senderDto.getDate().format(date) + " " +
+                  senderDto.getTransactionRef() + " confirmed on "+ senderDto.getDate().plusHours(3).format(date) + " " +
                           " at "+ senderDto.getDate().format(time)+ ". Ksh "+ senderDto.getTransactionAmount()+ "" +
                           " sent to "+ nameFormatter(recipient) + ". New QPay Account balance is "+"Ksh " +
                           (senderAccount.getBalance()-(Integer.parseInt(senderDto.getTransactionAmount())))
@@ -84,7 +84,7 @@ public class RandomGenerator {
           Message.creator(
                       new PhoneNumber("+254"+recipient.getPhone()),
                       new PhoneNumber(config.getTrialNumber()),
-                      receiverDto.getTransactionRef() + " confirmed on "+ receiverDto.getDate().format(date) + " " +
+                      receiverDto.getTransactionRef() + " confirmed on "+ receiverDto.getDate().plusHours(3).format(date) + " " +
                               " at "+ receiverDto.getDate().format(time)+ ". You have received Ksh "+ receiverDto.getTransactionAmount()+ " " +
                               "from "+ nameFormatter(sender) + ". New QPay Account balance is "+"Ksh " +
                               (receiverAccount.getBalance()-(Integer.parseInt(receiverDto.getTransactionAmount())))

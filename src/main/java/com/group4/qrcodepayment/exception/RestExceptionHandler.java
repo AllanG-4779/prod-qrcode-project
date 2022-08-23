@@ -92,9 +92,7 @@ public class RestExceptionHandler extends Exception {
                          .reason(HttpStatus.INTERNAL_SERVER_ERROR.toString())
                          .code(500)
                          .message(ex.getMessage())
-
-
-                 .build());
+                         .build());
 }
 //Hdndle user account disabled exception
     @ExceptionHandler(DisabledException.class)

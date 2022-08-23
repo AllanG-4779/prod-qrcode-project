@@ -62,7 +62,7 @@ public class TransactionRecordEventHandler {
                 new PhoneNumber("+254"+userInfo.getPhone()),
                 new PhoneNumber(twilioConfig.getTrialNumber()),
                 transferResponse.destinations.get(0).ReferenceNumber + " Confirmed on "+ LocalDate.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-                        +" at "+LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm a"))+
+                        +" at "+LocalDateTime.now().plusHours(3).format(DateTimeFormatter.ofPattern("HH:mm a"))+
                         " Ksh"+transferResponse.source.Amount+" " +
                         "has been deposited to your QPay Account from your "+bank.getName()+" Bank Account XXXXXX" +
                         transferResponse.source.AccountNumber.substring(transferResponse.source.AccountNumber.length()-4)+
