@@ -12,8 +12,7 @@ import javax.validation.constraints.Pattern;
 @NoArgsConstructor
 @Builder
 public class PasswordResetDto {
-    @NotBlank(message = "token is password reset token is required")
-    @NotNull(message="pass a request token")
+
     private String token;
     @NotBlank(message = "password can never be blank")
     @Pattern(regexp = "^(\\d){4}$",

@@ -29,9 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -286,6 +289,15 @@ public class Auth {
     @PutMapping("/password/reset")
     public ResponseEntity<?> resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto)
             throws RegistrationFailedException {
+//        User wants to change the password, he/she hasn't forgotten it
+        LinkedHashMap<String, String> res = new LinkedHashMap<>();
+        res.put("message", "password changed successfully");
+         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+         if(auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken) ){
+             String encodedPassword = passwordConfig.passwordEncoder().encode(passwordResetDto.getPassword());
+             userRegistrationService.updateUserpassword(auth.getName(),encodedPassword);
+             return ResponseEntity.status(201).body(res);
+         }
 
 //         Verify the token passed
         OneTimeCode otpToken = otpService.getOtpByCode(passwordResetDto.getToken());
