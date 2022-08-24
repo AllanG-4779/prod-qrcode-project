@@ -18,7 +18,7 @@ import java.util.Base64;
 
 @Component
 public class QRCodeGenerator {
-    private static final String LOGO= "https://i.imgur.com/Td5dF74m.png";
+    private static final String LOGO= "https://i.imgur.com/IHNjx7w.png";
     public static byte[] getQRcodeImage(String content, int width, int height) throws WriterException, IOException {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 //        BitMatrix matrix = qrCodeWriter.encode(content, BarcodeFormat.QR_CODE, width, height);
