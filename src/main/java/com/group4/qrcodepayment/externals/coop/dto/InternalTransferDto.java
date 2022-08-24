@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class InternalTransferDto {
-    private String sender;
     private String receiver;
     private String amount;
 }
