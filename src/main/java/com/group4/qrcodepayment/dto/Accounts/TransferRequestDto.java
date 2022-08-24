@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TransferRequestDto {
-    private String source;
-    private String amount="0";
     private String recipientPhone;
+    private String amount="0";
+    private String recipientName;
 }
 

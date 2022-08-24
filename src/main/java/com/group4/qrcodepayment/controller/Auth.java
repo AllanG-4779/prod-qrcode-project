@@ -284,7 +284,7 @@ public class Auth {
         otpService.addOtp(otpDto);
     }
     @PutMapping("/password/reset")
-    public ResponseEntity<String> resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto)
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid PasswordResetDto passwordResetDto)
             throws RegistrationFailedException {
 
 //         Verify the token passed
@@ -311,8 +311,11 @@ public class Auth {
 
 //        delete the token from the db
         otpService.deleteOtp(details[1]);
+        LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+        map.put("message", "Password created successfully");
+        userRegistrationService.flagAccount(user.getPhone(),false);
 
-        return ResponseEntity.status(201).body("Password created successfully");
+        return ResponseEntity.status(201).body(map);
 
     }
 

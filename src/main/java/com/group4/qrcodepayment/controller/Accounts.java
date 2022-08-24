@@ -89,7 +89,7 @@ public class Accounts {
 //        set the key
         textEncryptor.setPassword(key);
 //        encrypt the values
-        String message = "name="+user.getFirstName().trim()+user.getSecondName()
+        String message = "name="+user.getFirstName()+"-"+user.getSecondName()
                 .trim()+ " phone="+user.getPhone()+" amount="+amount;
         String hash = textEncryptor.encrypt(message);
 
@@ -237,19 +237,20 @@ public class Accounts {
 //        Check if amount is passed
         String [] amountArray = details[2].split("=");
 
-
+        String []recNames = details[0].split("=")[1].split("-");
+        String fullName = recNames[0]+" "+recNames[1];
         if(amountArray.length>1){
 
             return TransferRequestDto.builder()
-                    .recipientPhone(details[0].split("=")[1])
-                    .source(details[1].split("=")[1])
+                    .recipientName(fullName)
+                    .recipientPhone(details[1].split("=")[1])
                     .amount(details[2].split("=")[1])
                     .build();
         }
         else{
             return TransferRequestDto.builder()
-                    .recipientPhone(details[0].split("=")[1])
-                    .source(details[1].split("=")[1])
+                    .recipientPhone(details[1].split("=")[1])
+                    .recipientName(fullName)
                     .build();
         }
 
