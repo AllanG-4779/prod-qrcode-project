@@ -39,6 +39,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -195,16 +196,22 @@ public class Auth {
         if(otpDto.getCode().equals(code.getCode()) &&
                 LocalDateTime.now().isBefore(otpDto.getExpireAt())
         ){
-            if(userRegistrationService.findUserByPhone
-                    (code.getPhone()).getAccountFlagged()){
-                StrongTextEncryptor passResetToken = new StrongTextEncryptor();
-                passResetToken.setPassword("pass");
+            UserInfo account = userRegistrationService.findUserByPhone
+                    (code.getPhone());
+            try{
+                if(account.getAccountFlagged()){
+                    StrongTextEncryptor passResetToken = new StrongTextEncryptor();
+                    passResetToken.setPassword("pass");
 //                Encrypt the user details and the time the code was stamped
-                String message = LocalDateTime.now()+"="+userRegistrationService
-                        .findUserByPhone(code.getPhone()).getPhone();
-                String encrypted = passResetToken.encrypt(message);
-                otpService.updateOtp(encrypted,code.getPhone());
-                map.put("securityToken",encrypted);
+                    String message = LocalDateTime.now()+"="+userRegistrationService
+                            .findUserByPhone(code.getPhone()).getPhone();
+                    String encrypted = passResetToken.encrypt(message);
+                    otpService.updateOtp(encrypted,code.getPhone());
+                    map.put("securityToken",encrypted);
+                }
+
+            }catch (NullPointerException ex){
+                map.put("description","User unknown to the system");
             }
 
             map.put("code", 201);
